@@ -1,0 +1,11 @@
+# OS / environment
+.DS_Store
+.venv/
+
+# Local branding assets
+logo.png
+favicon.png
+
+# Self-hosted font files downloaded for HK Grotesk
+fonts/
+
