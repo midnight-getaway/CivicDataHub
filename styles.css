@@ -221,6 +221,24 @@ nav a:hover {
   border-radius: 2px;
 }
 
+.about-layout{
+  float: left;
+  width: 50%;
+  padding: 5px;
+}
+
+.about-column {
+  float: left;
+  width: 450px;
+  padding: 5px;
+}
+
+.about-row::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
 @media (max-width: 920px) {
   .nav {
     flex-wrap: wrap;
