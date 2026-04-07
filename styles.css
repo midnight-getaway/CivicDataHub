@@ -388,3 +388,164 @@ nav a:hover {
 .auth-switch a:hover {
   text-decoration: underline;
 }
+
+/* ── Account page ───────────────────────────────────────── */
+
+.account-section {
+  padding: 2.5rem 0 4rem;
+}
+
+.account-section .container {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.account-card,
+.saved-views-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 2rem;
+}
+
+.account-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.8rem;
+  padding-bottom: 1.4rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.avatar {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-size: 1.4rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.account-header h1 {
+  margin: 0;
+  font-size: 1.35rem;
+  color: var(--primary-dark);
+}
+
+.account-role {
+  margin: 0.15rem 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.account-details h2,
+.saved-views-card h2 {
+  margin: 0 0 1rem;
+  font-size: 1.1rem;
+  color: var(--primary-dark);
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid #eef0f6;
+}
+
+.detail-row:last-child {
+  border-bottom: none;
+}
+
+.detail-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.detail-value {
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.account-actions {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.btn-logout {
+  display: inline-block;
+  text-decoration: none;
+  text-align: center;
+  width: 100%;
+  background: #dc2626;
+}
+
+.btn-logout:hover {
+  background: #b91c1c;
+}
+
+.saved-views-subtitle {
+  margin: -0.5rem 0 1.2rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.views-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.view-tile {
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg);
+}
+
+.view-tile h3 {
+  margin: 0 0 0.3rem;
+  font-size: 0.95rem;
+  color: var(--primary-dark);
+}
+
+.view-dataset {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.view-date {
+  margin: 0.5rem 0 0;
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: var(--muted);
+}
+
+.empty-state p {
+  margin: 0 0 1rem;
+  font-size: 0.95rem;
+}
+
+.empty-state .btn-submit {
+  display: inline-block;
+  text-decoration: none;
+  padding: 0.6rem 1.4rem;
+}
+
+@media (max-width: 920px) {
+  .account-section .container {
+    grid-template-columns: 1fr;
+  }
+}
