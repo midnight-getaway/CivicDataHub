@@ -1,5 +1,11 @@
+# Planning Documents (Local Only)
 CINF362 - Final Project Proposal (2).pdf
 Component 1 Reflection.docx
 Component 1 Reflection.pdf
 Website Planning Exercise.pdf
 
+# Server config (Webserver Only)
+cinf362-CivicDataHub.conf
+
+# Database credentials (Local Only)
+db_connect.php
