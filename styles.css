@@ -227,8 +227,13 @@ nav a:hover {
 /* ================= ABOUT PAGE ====================== */
 
 .about-layout {
-  width: 100%;
+  padding: 1.8rem 0 2.5rem;
+}
+
+.about-text {
+  width: 50%;
   padding: 5px;
+  float: left;
 }
 
 .about-row {

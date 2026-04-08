@@ -9,7 +9,7 @@
 	<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
 	<link rel="icon" type="image/png" href="assets/favicon.png" />
 	<link rel="apple-touch-icon" href="assets/favicon.png" />
-	<link rel="stylesheet" href="styles.css?v=2" />
+	<link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
@@ -21,19 +21,19 @@
 			<nav aria-label="Main navigation">
 				<ul>
 					<li><a href="index.html#dashboards">Dashboards</a></li>
+					<li><a href="signup.php">Sign Up</a></li>
 					<li><a href="about.html">About Us</a></li>
 					<li><a href="login.php">Log In</a></li>
-					<li><a href="signup.php">Sign Up</a></li>
 				</ul>
 			</nav>
 		</div>
 	</header>
-
-	<main>
-		<section class="about-layout">
-			<h1>About Us</h1>
-			<hr>
-			<p> Civic Data Hub is a web-based platform designed to make New York State data more accessible,
+	<main class="about-layout">
+		<div class="container">
+			<section class="about-text">
+				<h1>About Us</h1>
+				<hr>
+				<p> Civic Data Hub is a web-based platform designed to make New York State data more accessible,
 				meaningful, and actionable. By aggregating trusted state-level datasets into interactive dashboards
 				with advanced filtering, we empower users to explore trends across regions, populations, and timeframes,
 				all in one place. Whether you're analyzing shifts in public health, education, housing, or civic
@@ -44,31 +44,37 @@
 				between complex government datasets and the researchers, advocates, planners, and community members
 				who need them most. Users can save custom views, collaborate with peers, and share findings with ease,
 				making it simpler than ever to turn data into decisions that matter.</p>
-		</section>
-		<section class="graphic-placeholder" role="img" style="margin: 5px;">
-			image placeholder
-		</section>
-		<section class="about-row">
-			<div class="about-column">
-				<p class="graphic-placeholder" role="img">image placeholder</p>
-				<h2>Your Name</h2>
-				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer eleifend orci lacus,
+			</section>
+			<section class="graphic-placeholder" role="img" style="margin: 5px;">
+				image placeholder
+			</section>
+			<section class="about-row">
+				<div class="about-column">
+					<img src="assets/Portrait-OS.png" role="img">
+					<h2>Owen Sim</h2>
+					<p>I am a senior student at UAlbany studying cybersecurity and work part-time for New York State ITS 
+					in the Division of Legal Technology. I took CINF 362 to help me improve my web development skills. At 
+					the beginning of the semester, I only knew HTML and basic CSS, but I’ve greatly improved on those skills 
+					and have learned quite a bit of JavaScript and PHP as well. This final project website has been a fun but 
+					challenging experience, as I’ve taken on implementing user account creation/authentication and helping my 
+					group use ChartJS to visualize our datasets. This involves ensuring the PHP forms and data views can integrate 
+					with the MySQL database securely and efficiently, which is a great task to assess and further improve my skills.</p>
+				</div>
+				<div class="about-column">
+					<img src="assets/Portrait-KM.png" role="img">
+					<h2>Kylie Mugrace</h2>
+					<p>I am an undergraduate student at UAlbany studying Informatics. When not working on my education, I volunteer 
+					for the Schaghticoke Fair as their IT technician. I took CINF 362 to improve my web development skills, especially 
+					in JavaScript and PHP, where my skills were lacking. I feel I've improved a lot compared to the beginning of the 
+					semester, and I'm hoping to showcase those skills with this final project.</p>
+				</div>
+				<div class="about-column">
+					<p class="graphic-placeholder" role="img">image placeholder</p>
+					<h2>Your Name</h2>
+					<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer eleifend orci lacus,
 					in ultricies eros condimentum eget. Vivamus elit magna, mollis pharetra justo quis, aliquam rutrum
 					quam.</p>
-			</div>
-			<div class="about-column">
-				<p class="graphic-placeholder" role="img">image placeholder</p>
-				<h2>Your Name</h2>
-				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer eleifend orci lacus,
-					in ultricies eros condimentum eget. Vivamus elit magna, mollis pharetra justo quis, aliquam rutrum
-					quam.</p>
-			</div>
-			<div class="about-column">
-				<p class="graphic-placeholder" role="img">image placeholder</p>
-				<h2>Your Name</h2>
-				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer eleifend orci lacus,
-					in ultricies eros condimentum eget. Vivamus elit magna, mollis pharetra justo quis, aliquam rutrum
-					quam.</p>
+				</div>
 			</div>
 		</section>
 	</main>
