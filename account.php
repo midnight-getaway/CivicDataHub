@@ -48,7 +48,7 @@ if ($db_configured) {
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
     <link rel="icon" type="image/png" href="assets/favicon.png" />
     <link rel="apple-touch-icon" href="assets/favicon.png" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=2" />
   </head>
   <body>
     <header class="site-header">
@@ -72,60 +72,51 @@ if ($db_configured) {
         <div class="container">
 
           <!-- Account Info Card -->
-          <div class="account-card">
-            <div class="account-header">
-              <div class="avatar"><?php echo strtoupper(substr($username, 0, 1)); ?></div>
-              <div>
-                <h1><?php echo $username; ?></h1>
-                <p class="account-role">Member</p>
-              </div>
+          <div class="card">
+            <h1><?php echo $username; ?></h1>
+            <p class="muted-text">Member</p>
+
+            <h2>Account Details</h2>
+
+            <?php if (!$db_configured): ?>
+              <div class="msg error">Database is not configured yet — account details will appear here once connected.</div>
+            <?php endif; ?>
+
+            <div class="detail-row">
+              <strong>Username</strong>
+              <span><?php echo $username; ?></span>
+            </div>
+            <div class="detail-row">
+              <strong>Email</strong>
+              <span><?php echo $email ?: '—'; ?></span>
+            </div>
+            <div class="detail-row">
+              <strong>Member Since</strong>
+              <span><?php echo $created_at ?: '—'; ?></span>
             </div>
 
-            <div class="account-details">
-              <h2>Account Details</h2>
-
-              <?php if (!$db_configured): ?>
-                <div class="form-message error">Database is not configured yet — account details will appear here once connected.</div>
-              <?php endif; ?>
-
-              <div class="detail-row">
-                <span class="detail-label">Username</span>
-                <span class="detail-value"><?php echo $username; ?></span>
-              </div>
-              <div class="detail-row">
-                <span class="detail-label">Email</span>
-                <span class="detail-value"><?php echo $email ?: '—'; ?></span>
-              </div>
-              <div class="detail-row">
-                <span class="detail-label">Member Since</span>
-                <span class="detail-value"><?php echo $created_at ?: '—'; ?></span>
-              </div>
-            </div>
-
-            <div class="account-actions">
-              <a href="logout.php" class="btn-submit btn-logout">Log Out</a>
-            </div>
+            <a href="logout.php" class="btn btn-danger" style="margin-top:1.5rem">Log Out</a>
           </div>
 
           <!-- Saved Data Views -->
-          <div class="saved-views-card">
+          <div class="card">
             <h2>Saved Data Views</h2>
-            <p class="saved-views-subtitle">Your saved dashboard configurations and filtered data views appear here.</p>
+            <p class="muted-text">Your saved dashboard configurations and filtered data views appear here.</p>
 
             <?php if (!$db_configured): ?>
-              <div class="form-message error">Database is not configured yet — saved views will load once connected.</div>
+              <div class="msg error">Database is not configured yet — saved views will load once connected.</div>
             <?php elseif (empty($saved_views)): ?>
               <div class="empty-state">
                 <p>You haven't saved any data views yet.</p>
-                <a href="index.html#dashboards" class="btn-submit">Explore Dashboards</a>
+                <a href="index.html#dashboards" class="btn">Explore Dashboards</a>
               </div>
             <?php else: ?>
               <div class="views-grid">
                 <?php foreach ($saved_views as $view): ?>
                   <div class="view-tile">
                     <h3><?php echo htmlspecialchars($view['view_name']); ?></h3>
-                    <p class="view-dataset"><?php echo htmlspecialchars($view['dataset']); ?></p>
-                    <p class="view-date">Saved <?php echo date('M j, Y', strtotime($view['created_at'])); ?></p>
+                    <p><?php echo htmlspecialchars($view['dataset']); ?></p>
+                    <p>Saved <?php echo date('M j, Y', strtotime($view['created_at'])); ?></p>
                   </div>
                 <?php endforeach; ?>
               </div>

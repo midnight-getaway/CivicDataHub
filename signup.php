@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
     <link rel="icon" type="image/png" href="assets/favicon.png" />
     <link rel="apple-touch-icon" href="assets/favicon.png" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=2" />
   </head>
   <body>
     <header class="site-header">
@@ -69,9 +69,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <nav aria-label="Main navigation">
           <ul>
             <li><a href="index.html#dashboards">Dashboards</a></li>
-            <li><a href="signup.php">Sign Up</a></li>
             <li><a href="about.html">About Us</a></li>
             <li><a href="login.php">Log In</a></li>
+            <li><a href="signup.php">Sign Up</a></li>
           </ul>
         </nav>
       </div>
@@ -80,15 +80,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <main>
       <section class="auth-section">
         <div class="container">
-          <div class="auth-card">
+          <div class="card">
             <h1>Create an Account</h1>
-            <p class="auth-subtitle">Join Civic Data Hub to explore and save custom data views.</p>
+            <p class="muted-text">Join Civic Data Hub to explore and save custom data views.</p>
 
             <?php if ($error): ?>
-              <div class="form-message error"><?php echo $error; ?></div>
+              <div class="msg error"><?php echo $error; ?></div>
             <?php endif; ?>
             <?php if ($success): ?>
-              <div class="form-message success"><?php echo $success; ?></div>
+              <div class="msg success"><?php echo $success; ?></div>
             <?php endif; ?>
 
             <form class="auth-form" method="POST" action="signup.php">
@@ -114,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="password" id="confirm_password" name="confirm_password" placeholder="Re-enter your password" required />
               </div>
 
-              <button type="submit" class="btn-submit">Sign Up</button>
+              <button type="submit" class="btn">Sign Up</button>
             </form>
 
             <p class="auth-switch">Already have an account? <a href="login.php">Log in</a></p>

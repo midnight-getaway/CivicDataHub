@@ -1,3 +1,5 @@
+/* ================= FONTS ====================== */
+
 @font-face {
   font-family: "HK Grotesk";
   src: url("fonts/hkgrotesk-light.woff2") format("woff2");
@@ -38,6 +40,8 @@
   font-display: swap;
 }
 
+/* ================= VARIABLES ====================== */
+
 :root {
   --bg: #f4f6fc;
   --header-bar: #e8eaef;
@@ -47,19 +51,18 @@
   --primary-dark: #050a30;
   --accent: #233dff;
   --border: #d9e2f2;
-  --placeholder-media: #c5c9d4;
-  --placeholder-field: #e5e8f0;
+  --placeholder-bg: #d1d4dd;
+  --placeholder-border: #c2c8d6;
+  --field-bg: #e5e8f0;
   --field-border: #cfd6e6;
-  --btn-submit: #6b7280;
-  --btn-submit-hover: #4b5563;
+  --btn-bg: #6b7280;
+  --btn-hover: #4b5563;
 }
 
-* {
+/* ================= BASE ====================== */
+
+*, *::before, *::after {
   box-sizing: border-box;
-}
-
-html {
-  font-family: "HK Grotesk", sans-serif;
 }
 
 body {
@@ -70,17 +73,22 @@ body {
   line-height: 1.4;
 }
 
-button,
-input,
-select,
-textarea {
+button, input, select, textarea {
   font-family: inherit;
 }
+
+h1, h2, h3 {
+  color: var(--primary-dark);
+}
+
+/* ================= LAYOUT ====================== */
 
 .container {
   width: min(1080px, 92%);
   margin: 0 auto;
 }
+
+/* ================= HEADER & NAV ====================== */
 
 .site-header {
   background: var(--header-bar);
@@ -129,21 +137,19 @@ nav a:hover {
   color: var(--primary);
 }
 
+/* ================= HOME PAGE ====================== */
+
 .home-layout {
   padding: 1.8rem 0 2.5rem;
 }
 
-.search-row {
-  margin-bottom: 1.5rem;
-}
-
 .search-placeholder {
   width: min(540px, 90%);
-  margin: 0 auto;
+  margin: 0 auto 1.5rem;
   height: 46px;
   border: 1px solid #c8cedd;
-  background: var(--placeholder-field);
-  color: #2d3748;
+  background: var(--field-bg);
+  color: var(--text);
   display: grid;
   place-items: center;
   border-radius: 2px;
@@ -151,14 +157,11 @@ nav a:hover {
   font-weight: 500;
 }
 
-.dashboard-row {
-  margin-bottom: 2rem;
-}
-
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1.2rem;
+  margin-bottom: 2rem;
 }
 
 .dashboard-tile {
@@ -183,8 +186,8 @@ nav a:hover {
 
 .graphic-placeholder {
   min-height: 450px;
-  border: 1px solid #c2c8d6;
-  background: #d1d4dd;
+  border: 1px solid var(--placeholder-border);
+  background: var(--placeholder-bg);
   border-radius: 2px;
   display: grid;
   place-items: center;
@@ -221,98 +224,54 @@ nav a:hover {
   border-radius: 2px;
 }
 
-.about-layout{
-  float: left;
-  width: 50%;
+/* ================= ABOUT PAGE ====================== */
+
+.about-layout {
+  width: 100%;
   padding: 5px;
+}
+
+.about-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  padding: 0 5px;
 }
 
 .about-column {
-  float: left;
-  width: 450px;
+  flex: 1 1 260px;
+  min-width: 0;
   padding: 5px;
 }
 
-.about-row::after {
-  content: "";
-  clear: both;
-  display: table;
+/* ================= SHARED COMPONENTS ====================== */
+
+/* Muted subtitle text used on auth and account pages */
+.muted-text {
+  margin: 0 0 1.2rem;
+  color: var(--muted);
+  font-size: 0.9rem;
 }
 
-@media (max-width: 920px) {
-  .nav {
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    padding: 0.75rem 0;
-  }
-
-  .brand-logo {
-    height: 54px;
-  }
-
-  .dashboard-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .content-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .graphic-placeholder {
-    min-height: 300px;
-    font-size: 1.5rem;
-  }
-
-  .insight-column {
-    align-items: flex-start;
-    gap: 1rem;
-  }
-}
-
-/* ── Auth pages (login / signup) ────────────────────────── */
-
-.auth-section {
-  display: flex;
-  justify-content: center;
-  padding: 3rem 0 4rem;
-}
-
-.auth-card {
-  width: min(460px, 100%);
+/* Card: white bordered box used on auth and account pages */
+.card {
   background: #fff;
   border: 1px solid var(--border);
   border-radius: 6px;
-  padding: 2.5rem 2rem;
+  padding: 2rem;
 }
 
-.auth-card h1 {
-  margin: 0 0 0.3rem;
-  font-size: 1.6rem;
-  color: var(--primary-dark);
-}
-
-.auth-subtitle {
-  margin: 0 0 1.5rem;
-  color: var(--muted);
-  font-size: 0.95rem;
-}
-
-.auth-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.1rem;
-}
-
+/* Form inputs */
 .form-group {
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
+  margin-bottom: 1.1rem;
 }
 
 .form-group label {
   font-weight: 600;
   font-size: 0.9rem;
-  color: var(--text);
 }
 
 .form-group input {
@@ -320,7 +279,7 @@ nav a:hover {
   border: 1px solid var(--field-border);
   border-radius: 4px;
   font-size: 0.95rem;
-  background: var(--placeholder-field);
+  background: var(--field-bg);
   color: var(--text);
   transition: border-color 0.2s;
 }
@@ -331,47 +290,85 @@ nav a:hover {
   background: #fff;
 }
 
-.btn-submit {
+/* Primary action button */
+.btn {
+  display: block;
+  width: 100%;
   margin-top: 0.5rem;
   padding: 0.7rem;
-  background: var(--btn-submit);
+  background: var(--btn-bg);
   color: #fff;
   border: none;
   border-radius: 4px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
+  text-align: center;
+  text-decoration: none;
   transition: background 0.2s;
 }
 
-.btn-submit:hover {
-  background: var(--btn-submit-hover);
+.btn:hover {
+  background: var(--btn-hover);
 }
 
-.form-message {
+.btn.btn-danger {
+  background: #dc2626;
+}
+
+.btn.btn-danger:hover {
+  background: #b91c1c;
+}
+
+/* Inline status messages */
+.msg {
   padding: 0.7rem 0.9rem;
   border-radius: 4px;
   font-size: 0.9rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
 }
 
-.form-message.error {
+.msg.error {
   background: #fef2f2;
   color: #991b1b;
   border: 1px solid #fecaca;
 }
 
-.form-message.success {
+.msg.success {
   background: #f0fdf4;
   color: #166534;
   border: 1px solid #bbf7d0;
 }
 
-.form-message.success a {
+.msg.success a {
   color: #166534;
   font-weight: 600;
 }
 
+/* ================= AUTH PAGES ====================== */
+
+.auth-section {
+  display: flex;
+  justify-content: center;
+  padding: 3rem 0 4rem;
+}
+
+.auth-section .card {
+  width: min(460px, 100%);
+  padding: 2.5rem 2rem;
+}
+
+.auth-section h1 {
+  margin: 0 0 0.3rem;
+  font-size: 1.6rem;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+}
+
+/* "Already have account?" switch link */
 .auth-switch {
   margin-top: 1.2rem;
   text-align: center;
@@ -389,7 +386,7 @@ nav a:hover {
   text-decoration: underline;
 }
 
-/* ── Account page ───────────────────────────────────────── */
+/* ================= ACCOUNT PAGE ====================== */
 
 .account-section {
   padding: 2.5rem 0 4rem;
@@ -402,100 +399,30 @@ nav a:hover {
   align-items: start;
 }
 
-.account-card,
-.saved-views-card {
-  background: #fff;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 2rem;
-}
-
-.account-header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.8rem;
-  padding-bottom: 1.4rem;
-  border-bottom: 1px solid var(--border);
-}
-
-.avatar {
-  width: 54px;
-  height: 54px;
-  border-radius: 50%;
-  background: var(--primary);
-  color: #fff;
-  display: grid;
-  place-items: center;
-  font-size: 1.4rem;
-  font-weight: 700;
-  flex-shrink: 0;
-}
-
-.account-header h1 {
-  margin: 0;
-  font-size: 1.35rem;
-  color: var(--primary-dark);
-}
-
-.account-role {
-  margin: 0.15rem 0 0;
-  color: var(--muted);
-  font-size: 0.85rem;
-}
-
-.account-details h2,
-.saved-views-card h2 {
+.account-section h2 {
   margin: 0 0 1rem;
   font-size: 1.1rem;
-  color: var(--primary-dark);
 }
 
+/* Detail rows (username, email, etc.) */
 .detail-row {
   display: flex;
   justify-content: space-between;
   padding: 0.6rem 0;
   border-bottom: 1px solid #eef0f6;
+  font-size: 0.9rem;
 }
 
-.detail-row:last-child {
+.detail-row:last-of-type {
   border-bottom: none;
 }
 
-.detail-label {
+.detail-row strong {
+  color: var(--muted);
   font-weight: 600;
-  font-size: 0.9rem;
-  color: var(--muted);
 }
 
-.detail-value {
-  font-size: 0.9rem;
-  color: var(--text);
-}
-
-.account-actions {
-  margin-top: 1.5rem;
-  text-align: center;
-}
-
-.btn-logout {
-  display: inline-block;
-  text-decoration: none;
-  text-align: center;
-  width: 100%;
-  background: #dc2626;
-}
-
-.btn-logout:hover {
-  background: #b91c1c;
-}
-
-.saved-views-subtitle {
-  margin: -0.5rem 0 1.2rem;
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-
+/* Saved views grid */
 .views-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -512,21 +439,15 @@ nav a:hover {
 .view-tile h3 {
   margin: 0 0 0.3rem;
   font-size: 0.95rem;
-  color: var(--primary-dark);
 }
 
-.view-dataset {
-  margin: 0;
+.view-tile p {
+  margin: 0.25rem 0 0;
   font-size: 0.8rem;
   color: var(--muted);
 }
 
-.view-date {
-  margin: 0.5rem 0 0;
-  font-size: 0.75rem;
-  color: #9ca3af;
-}
-
+/* Empty state */
 .empty-state {
   text-align: center;
   padding: 2rem 1rem;
@@ -535,17 +456,69 @@ nav a:hover {
 
 .empty-state p {
   margin: 0 0 1rem;
-  font-size: 0.95rem;
 }
 
-.empty-state .btn-submit {
+.empty-state .btn {
+  width: auto;
   display: inline-block;
-  text-decoration: none;
   padding: 0.6rem 1.4rem;
 }
 
+/* ================= MEDIA QUERIES ====================== */
+/* --- Tablet --- */
 @media (max-width: 920px) {
-  .account-section .container {
+  .nav {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 0.75rem 0;
+  }
+
+  .brand-logo {
+    height: 54px;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .content-grid, .account-section .container {
     grid-template-columns: 1fr;
+  }
+
+  .graphic-placeholder {
+    min-height: 300px;
+    font-size: 1.5rem;
+  }
+
+  .insight-column {
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .about-column {
+    flex: 1 1 100%;
+  }
+
+  .auth-section .card {
+    padding: 1.75rem 1.25rem;
+  }
+}
+
+/* --- Mobile --- */
+@media (max-width: 480px) {
+  nav ul {
+    gap: 0.5rem;
+  }
+
+  nav a {
+    font-size: 0.85rem;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .auth-section .card {
+    padding: 1.25rem 1rem;
   }
 }

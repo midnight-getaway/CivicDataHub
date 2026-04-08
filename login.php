@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
     <link rel="icon" type="image/png" href="assets/favicon.png" />
     <link rel="apple-touch-icon" href="assets/favicon.png" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=2" />
   </head>
   <body>
     <header class="site-header">
@@ -57,9 +57,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <nav aria-label="Main navigation">
           <ul>
             <li><a href="index.html#dashboards">Dashboards</a></li>
-            <li><a href="signup.php">Sign Up</a></li>
             <li><a href="about.html">About Us</a></li>
             <li><a href="login.php">Log In</a></li>
+            <li><a href="signup.php">Sign Up</a></li>
           </ul>
         </nav>
       </div>
@@ -68,12 +68,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <main>
       <section class="auth-section">
         <div class="container">
-          <div class="auth-card">
+          <div class="card">
             <h1>Log In</h1>
-            <p class="auth-subtitle">Welcome back — sign in to access your dashboards.</p>
+            <p class="muted-text">Welcome back — sign in to access your dashboards.</p>
 
             <?php if ($error): ?>
-              <div class="form-message error"><?php echo $error; ?></div>
+              <div class="msg error"><?php echo $error; ?></div>
             <?php endif; ?>
 
             <form class="auth-form" method="POST" action="login.php">
@@ -88,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="password" id="password" name="password" placeholder="Enter your password" required />
               </div>
 
-              <button type="submit" class="btn-submit">Log In</button>
+              <button type="submit" class="btn">Log In</button>
             </form>
 
             <p class="auth-switch">Don't have an account? <a href="signup.php">Sign up</a></p>
