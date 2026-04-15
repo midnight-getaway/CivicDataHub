@@ -9,4 +9,4 @@ Civic Data Hub Tasks.csv
 cinf362-CivicDataHub.conf
 
 # Database credentials (Local Only)
-db_connect.php
+db_connect*
