@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!doctype html>
 <html lang="en">
 
@@ -9,34 +12,20 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
   <link rel="icon" type="image/png" href="assets/favicon.png" />
   <link rel="apple-touch-icon" href="assets/favicon.png" />
-  <link rel="stylesheet" href="styles.css?v=3" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
-  <header class="site-header">
-    <div class="container nav">
-      <a class="brand" href="index.html" aria-label="Civic Data Hub home">
-        <img class="brand-logo" src="assets/logo.png" alt="Civic Data Hub" />
-      </a>
-      <nav aria-label="Main navigation">
-        <ul>
-          <li><a href="index.html#dashboards">Dashboards</a></li>
-          <li><a href="about.html">About Us</a></li>
-          <li><a href="login.php">Log In</a></li>
-          <li><a href="signup.php">Sign Up</a></li>
-        </ul>
-      </nav>
-    </div>
-  </header>
+  <?php require 'includes/header.php'; ?>
 
   <main class="home-layout">
-    <section class="search-row" aria-label="Search section">
+    <section aria-label="Search section">
       <div class="container">
         <div class="search-placeholder">Search</div>
       </div>
     </section>
 
-    <section id="dashboards" class="dashboard-row" aria-label="Dashboard shortcuts">
+    <section id="dashboards" aria-label="Dashboard shortcuts">
       <div class="container dashboard-grid">
         <a class="dashboard-tile" href="#">Dashboard</a>
         <a class="dashboard-tile" href="#">Dashboard</a>
@@ -45,7 +34,7 @@
       </div>
     </section>
 
-    <section id="overview" class="content-row" aria-label="Data and summary">
+    <section id="overview" aria-label="Data and summary">
       <div class="container content-grid">
         <div class="graphic-placeholder" role="img" aria-label="Graphic and data visualization placeholder">
           Graphic/Data Visualization

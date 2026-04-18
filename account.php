@@ -41,24 +41,10 @@ if ($db_configured) {
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
     <link rel="icon" type="image/png" href="assets/favicon.png" />
     <link rel="apple-touch-icon" href="assets/favicon.png" />
-    <link rel="stylesheet" href="styles.css?v=3" />
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <header class="site-header">
-      <div class="container nav">
-        <a class="brand" href="index.html" aria-label="Civic Data Hub home">
-          <img class="brand-logo" src="assets/logo.png" alt="Civic Data Hub" />
-        </a>
-        <nav aria-label="Main navigation">
-          <ul>
-            <li><a href="index.html#dashboards">Dashboards</a></li>
-            <li><a href="about.html">About Us</a></li>
-            <li><a href="account.php">My Account</a></li>
-            <li><a href="logout.php">Log Out</a></li>
-          </ul>
-        </nav>
-      </div>
-    </header>
+    <?php require 'includes/header.php'; ?>
 
     <main>
       <section class="account-section">
