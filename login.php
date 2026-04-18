@@ -14,12 +14,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Database is not configured yet. Please check back later.';
     } else {
         // Look up user by username or email
-        $stmt = $conn->prepare("SELECT id, username, password FROM users WHERE username = ? OR email = ?");
-        $stmt->bind_param("ss", $login, $login);
-        $stmt->execute();
-        $result = $stmt->get_result();
+        $stmt = $pdo->prepare("SELECT id, username, password FROM users WHERE username = ? OR email = ?");
+        $stmt->execute([$login, $login]);
+        $row = $stmt->fetch();
 
-        if ($row = $result->fetch_assoc()) {
+        if ($row) {
             if (password_verify($password, $row['password'])) {
                 // Login successful — set session variables
                 $_SESSION['user_id']  = $row['id'];
@@ -32,7 +31,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $error = 'No account found with that username or email.';
         }
-        $stmt->close();
     }
 }
 ?>

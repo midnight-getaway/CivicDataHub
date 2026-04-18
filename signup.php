@@ -24,27 +24,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Database is not configured yet. Please check back later.';
     } else {
         // Check if username or email already exists
-        $stmt = $conn->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
-        $stmt->bind_param("ss", $username, $email);
-        $stmt->execute();
-        $stmt->store_result();
+        $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
+        $stmt->execute([$username, $email]);
 
-        if ($stmt->num_rows > 0) {
+        if ($stmt->fetch()) {
             $error = 'Username or email already exists.';
         } else {
             // Hash the password and insert
             $hashed = password_hash($password, PASSWORD_DEFAULT);
-            $insert = $conn->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
-            $insert->bind_param("sss", $username, $email, $hashed);
+            $insert = $pdo->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
 
-            if ($insert->execute()) {
+            if ($insert->execute([$username, $email, $hashed])) {
                 $success = 'Account created successfully! You can now <a href="login.php">log in</a>.';
             } else {
                 $error = 'Something went wrong. Please try again.';
             }
-            $insert->close();
         }
-        $stmt->close();
     }
 }
 ?>

@@ -15,27 +15,20 @@ $saved_views = [];
 
 if ($db_configured) {
     // Fetch account details
-    $stmt = $conn->prepare("SELECT username, email, created_at FROM users WHERE id = ?");
-    $stmt->bind_param("i", $_SESSION['user_id']);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $stmt = $pdo->prepare("SELECT username, email, created_at FROM users WHERE id = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+    $row = $stmt->fetch();
 
-    if ($row = $result->fetch_assoc()) {
+    if ($row) {
         $username   = htmlspecialchars($row['username']);
         $email      = htmlspecialchars($row['email']);
         $created_at = date('F j, Y', strtotime($row['created_at']));
     }
-    $stmt->close();
 
     // TODO: Fetch saved data views once the saved_views table exists
-    // $views_stmt = $conn->prepare("SELECT id, view_name, dataset, created_at FROM saved_views WHERE user_id = ? ORDER BY created_at DESC");
-    // $views_stmt->bind_param("i", $_SESSION['user_id']);
-    // $views_stmt->execute();
-    // $views_result = $views_stmt->get_result();
-    // while ($view = $views_result->fetch_assoc()) {
-    //     $saved_views[] = $view;
-    // }
-    // $views_stmt->close();
+    // $views_stmt = $pdo->prepare("SELECT id, view_name, dataset, created_at FROM saved_views WHERE user_id = ? ORDER BY created_at DESC");
+    // $views_stmt->execute([$_SESSION['user_id']]);
+    // $saved_views = $views_stmt->fetchAll();
 }
 ?>
 <!doctype html>
