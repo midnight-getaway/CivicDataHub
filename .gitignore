@@ -6,9 +6,11 @@ Website Planning Exercise.pdf
 Civic Data Hub Tasks.csv
 Civic Data Hub Sources.md
 
-
 # Server config (Webserver Only)
 cinf362-CivicDataHub.conf
 
-# Database credentials (Local Only)
+# Database credentials (Webserver Only)
 db_connect*
+
+# Dataset Retrevial Scripts (Webserver Only)
+/scripts

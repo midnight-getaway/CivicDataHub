@@ -485,6 +485,100 @@ nav a:hover {
   padding: 0.6rem 1.4rem;
 }
 
+/* ================= DASHBOARD PAGES ====================== */
+
+.dashboard-layout {
+  padding: 2rem 0 3rem;
+}
+
+.dashboard-layout h1 {
+  margin: 0 0 0.25rem;
+  font-size: 1.5rem;
+}
+
+/* Filter bar */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.filter-group label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.filter-group select {
+  padding: 0.45rem 0.5rem;
+  border: 1px solid var(--field-border);
+  border-radius: 4px;
+  font-size: 0.9rem;
+  background: var(--field-bg);
+  color: var(--text);
+}
+
+/* Stat cards */
+.stat-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1.25rem;
+  text-align: center;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 0.4rem;
+}
+
+.stat-value {
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+}
+
+/* Chart cards */
+.chart-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.chart-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1.25rem;
+}
+
+.chart-card h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+}
+
 /* ================= MEDIA QUERIES ====================== */
 /* --- Tablet --- */
 @media (max-width: 920px) {
@@ -523,6 +617,14 @@ nav a:hover {
   .auth-section .card {
     padding: 1.75rem 1.25rem;
   }
+
+  .chart-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 /* --- Mobile --- */
@@ -541,5 +643,13 @@ nav a:hover {
 
   .auth-section .card {
     padding: 1.25rem 1rem;
+  }
+
+  .stat-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-bar {
+    flex-direction: column;
   }
 }
