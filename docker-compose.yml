@@ -1,0 +1,13 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: civicdatahub-local
+    ports:
+      - "${APP_PORT:-8081}:80"
+    environment:
+      DB_PATH: /var/www/html/data/civicdatahub.sqlite
+      CENSUS_API_KEY: ${CENSUS_API_KEY:-}
+    volumes:
+      - ./data:/var/www/html/data

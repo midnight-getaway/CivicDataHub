@@ -28,7 +28,7 @@ session_start();
     <section id="dashboards" aria-label="Dashboard shortcuts">
       <div class="container dashboard-grid">
         <a class="dashboard-tile" href="dashboard1.php">Economic Hardship</a>
-        <a class="dashboard-tile" href="#">Housing &amp; Homelessness</a>
+        <a class="dashboard-tile" href="dashboard2.php">Housing &amp; Homelessness</a>
         <a class="dashboard-tile" href="#">Health &amp; Wellbeing</a>
         <a class="dashboard-tile" href="#">Education &amp; Youth</a>
       </div>
