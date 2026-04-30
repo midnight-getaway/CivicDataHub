@@ -26,10 +26,10 @@ if ($db_configured) {
         $created_at = date('F j, Y', strtotime($row['created_at']));
     }
 
-    // TODO: Fetch saved data views once the saved_views table exists
-    // $views_stmt = $pdo->prepare("SELECT id, view_name, dataset, created_at FROM saved_views WHERE user_id = ? ORDER BY created_at DESC");
-    // $views_stmt->execute([$_SESSION['user_id']]);
-    // $saved_views = $views_stmt->fetchAll();
+    // Fetch saved data views
+    $views_stmt = $pdo->prepare("SELECT id, view_name, dashboard_name, dashboard_url, filters, created_at FROM saved_views WHERE user_id = ? ORDER BY created_at DESC");
+    $views_stmt->execute([$_SESSION['user_id']]);
+    $saved_views = $views_stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 $name_source = trim($_SESSION['username'] ?? '');
@@ -111,12 +111,20 @@ if ($name_source !== '' && strpos($name_source, '@') === false) {
                 </div>
               </div>
             <?php else: ?>
-              <div class="views-grid">
-                <?php foreach ($saved_views as $view): ?>
-                  <div class="view-tile">
-                    <h3><?php echo htmlspecialchars($view['view_name']); ?></h3>
-                    <p><?php echo htmlspecialchars($view['dataset']); ?></p>
-                    <p>Saved <?php echo date('M j, Y', strtotime($view['created_at'])); ?></p>
+              <div class="views-grid" style="display: grid; gap: 1rem;">
+                <?php foreach ($saved_views as $view): 
+                  // Convert JSON filters to URL query string
+                  $filters = json_decode($view['filters'], true);
+                  $query_str = http_build_query($filters);
+                  $view_link = $view['dashboard_url'] . '?' . $query_str;
+                ?>
+                  <div class="view-tile card" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem;">
+                    <div>
+                      <h3 style="margin: 0 0 0.25rem;"><a href="<?php echo htmlspecialchars($view_link); ?>" style="text-decoration: none; color: var(--primary-dark);"><?php echo htmlspecialchars($view['view_name']); ?></a></h3>
+                      <p style="margin: 0; font-size: 0.9rem; color: var(--muted);"><?php echo htmlspecialchars($view['dashboard_name']); ?></p>
+                      <p style="margin: 0; font-size: 0.8rem; color: var(--muted);">Saved <?php echo date('M j, Y', strtotime($view['created_at'])); ?></p>
+                    </div>
+                    <button class="btn btn-danger delete-view-btn" data-id="<?php echo $view['id']; ?>" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Delete</button>
                   </div>
                 <?php endforeach; ?>
               </div>
@@ -126,5 +134,36 @@ if ($name_source !== '' && strpos($name_source, '@') === false) {
         </div>
       </section>
     </main>
+    
+    <script>
+      document.querySelectorAll('.delete-view-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          if (!confirm("Are you sure you want to delete this view?")) return;
+          
+          const viewId = this.getAttribute('data-id');
+          fetch('api/delete_view.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ view_id: viewId })
+          })
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              this.closest('.view-tile').remove();
+              // Check if empty
+              if (document.querySelectorAll('.view-tile').length === 0) {
+                location.reload(); // Reload to show empty state
+              }
+            } else {
+              alert("Error deleting view: " + (data.error || "Unknown error"));
+            }
+          })
+          .catch(err => {
+            console.error(err);
+            alert("An error occurred while deleting.");
+          });
+        });
+      });
+    </script>
   </body>
 </html>

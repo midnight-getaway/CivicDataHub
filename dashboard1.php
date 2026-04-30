@@ -1,5 +1,6 @@
 <?php
 session_start();
+session_write_close(); // Release the session lock immediately
 require_once 'db_connect.php';
 
 // Get all counties for the dropdown
@@ -79,6 +80,10 @@ if ($pdo) {
               <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['county_name']) ?></option>
             <?php endforeach; ?>
           </select>
+        </div>
+
+        <div class="filter-group" style="justify-content: flex-end;">
+          <button id="save-view-btn" class="btn" style="padding: 0.45rem 1rem;">Save View</button>
         </div>
       </div>
 
@@ -160,6 +165,19 @@ if ($pdo) {
       let url = `api/dashboard1.php?county_id=${countyId}&year_start=${yearStart}&year_end=${yearEnd}`;
       if (compareId) url += `&compare_ids=${compareId}`;
 
+      // Update browser URL silently so users can copy-paste it
+      const newUrl = new URL(window.location);
+      newUrl.searchParams.set('county_id', countyId);
+      newUrl.searchParams.set('year_start', yearStart);
+      newUrl.searchParams.set('year_end', yearEnd);
+      newUrl.searchParams.set('metric', metric);
+      if (compareId) {
+        newUrl.searchParams.set('compare_ids', compareId);
+      } else {
+        newUrl.searchParams.delete('compare_ids');
+      }
+      window.history.replaceState({}, '', newUrl);
+
       fetch(url)
         .then(res => res.json())
         .then(data => {
@@ -240,7 +258,60 @@ if ($pdo) {
     document.getElementById('metric-select').addEventListener('change', fetchDashboard);
     document.getElementById('compare-select').addEventListener('change', fetchDashboard);
 
+    // Save view logic
+    document.getElementById('save-view-btn').addEventListener('click', () => {
+      <?php if (!isset($_SESSION['user_id'])): ?>
+        window.location.href = 'login.php';
+        return;
+      <?php endif; ?>
+
+      const viewName = prompt("Enter a name for this saved view:");
+      if (!viewName) return;
+
+      const filters = {
+        county_id: document.getElementById('county-select').value,
+        year_start: document.getElementById('year-start').value,
+        year_end: document.getElementById('year-end').value,
+        metric: document.getElementById('metric-select').value,
+        compare_ids: document.getElementById('compare-select').value
+      };
+
+      fetch('api/save_view.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          view_name: viewName,
+          dashboard_url: 'dashboard1.php',
+          dashboard_name: 'Economic Hardship',
+          filters: filters
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          alert("View saved successfully!");
+        } else {
+          alert("Error saving view: " + (data.error || "Unknown error"));
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert("An error occurred while saving.");
+      });
+    });
+
+    // Initialize filters from URL parameters
+    function initFiltersFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.has('county_id')) document.getElementById('county-select').value = params.get('county_id');
+      if (params.has('year_start')) document.getElementById('year-start').value = params.get('year_start');
+      if (params.has('year_end')) document.getElementById('year-end').value = params.get('year_end');
+      if (params.has('metric')) document.getElementById('metric-select').value = params.get('metric');
+      if (params.has('compare_ids')) document.getElementById('compare-select').value = params.get('compare_ids');
+    }
+
     // Initial load
+    initFiltersFromUrl();
     fetchDashboard();
   </script>
 </body>
