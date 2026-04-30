@@ -12,6 +12,7 @@ $username = htmlspecialchars($_SESSION['username'] ?? 'User');
 $email = '';
 $created_at = '';
 $saved_views = [];
+$greeting_title = 'My Account';
 
 if ($db_configured) {
     // Fetch account details
@@ -29,6 +30,18 @@ if ($db_configured) {
     // $views_stmt = $pdo->prepare("SELECT id, view_name, dataset, created_at FROM saved_views WHERE user_id = ? ORDER BY created_at DESC");
     // $views_stmt->execute([$_SESSION['user_id']]);
     // $saved_views = $views_stmt->fetchAll();
+}
+
+$name_source = trim($_SESSION['username'] ?? '');
+if ($db_configured && !empty($row['username'])) {
+    $name_source = trim((string) $row['username']);
+}
+if ($name_source !== '' && strpos($name_source, '@') === false) {
+    $name_parts = preg_split('/[\s._-]+/', $name_source);
+    $first_name = trim((string) ($name_parts[0] ?? ''));
+    if ($first_name !== '') {
+        $greeting_title = 'Welcome back, ' . htmlspecialchars(ucfirst($first_name));
+    }
 }
 ?>
 <!doctype html>
@@ -52,10 +65,10 @@ if ($db_configured) {
 
           <!-- Account Info Card -->
           <div class="card">
-            <h1><?php echo $username; ?></h1>
-            <p class="muted-text">Member</p>
+            <h1 class="account-title"><?php echo $greeting_title; ?></h1>
+            <p class="member-badge">Member</p>
 
-            <h2>Account Details</h2>
+            <h2 class="account-details-heading">Account Details</h2>
 
             <?php if (!$db_configured): ?>
               <div class="msg error">Database is not configured yet — account details will appear here once connected.</div>
@@ -73,8 +86,9 @@ if ($db_configured) {
               <strong>Member Since</strong>
               <span><?php echo $created_at ?: '—'; ?></span>
             </div>
+            <hr class="account-divider" />
 
-            <a href="logout.php" class="btn btn-danger" style="margin-top:1.5rem">Log Out</a>
+            <a href="logout.php" class="btn btn-danger">Log Out</a>
           </div>
 
           <!-- Saved Data Views -->
@@ -86,8 +100,15 @@ if ($db_configured) {
               <div class="msg error">Database is not configured yet — saved views will load once connected.</div>
             <?php elseif (empty($saved_views)): ?>
               <div class="empty-state">
+                <div class="empty-icon" aria-hidden="true">▦</div>
                 <p>You haven't saved any data views yet.</p>
-                <a href="index.html#dashboards" class="btn">Explore Dashboards</a>
+                <p class="muted-text account-explore-label">Explore Dashboards</p>
+                <div class="account-dashboard-links">
+                  <a href="dashboard1.php" class="btn">Economic Hardship</a>
+                  <a href="dashboard2.php" class="btn">Housing &amp; Homelessness</a>
+                  <a href="dashboard3.php" class="btn">Health &amp; Wellbeing</a>
+                  <a href="#" class="btn">Education &amp; Youth</a>
+                </div>
               </div>
             <?php else: ?>
               <div class="views-grid">

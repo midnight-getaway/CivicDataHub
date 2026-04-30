@@ -19,16 +19,10 @@ session_start();
   <?php require 'includes/header.php'; ?>
 
   <main class="home-layout">
-    <section aria-label="Search section">
-      <div class="container">
-        <div class="search-placeholder">Search</div>
-      </div>
-    </section>
-
     <section id="dashboards" aria-label="Dashboard shortcuts">
       <div class="container dashboard-grid">
         <a class="dashboard-tile" href="dashboard1.php">Economic Hardship</a>
-        <a class="dashboard-tile" href="#">Housing &amp; Homelessness</a>
+        <a class="dashboard-tile" href="dashboard2.php">Housing &amp; Homelessness</a>
         <a class="dashboard-tile" href="dashboard3.php">Health &amp; Wellbeing</a>
         <a class="dashboard-tile" href="#">Education &amp; Youth</a>
       </div>
@@ -37,15 +31,15 @@ session_start();
     <section id="overview" aria-label="Data and summary">
       <div class="container content-grid">
         <div class="graphic-placeholder" role="img" aria-label="Graphic and data visualization placeholder">
-          Graphic/Data Visualization
+          Select a dashboard above to begin exploring data.
         </div>
 
         <div class="insight-column">
           <p class="insight-text">
             Explore trusted public data, compare trends, and surface key community needs.
           </p>
-          <div class="datapoint-box">Datapoint</div>
-          <div class="datapoint-box">Datapoint</div>
+          <div class="datapoint-box"><span class="datapoint-label">NYS Counties Covered</span><span class="datapoint-value">62</span></div>
+          <div class="datapoint-box"><span class="datapoint-label">Data Sources</span><span class="datapoint-value">4</span></div>
         </div>
       </div>
     </section>

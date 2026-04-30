@@ -11,7 +11,14 @@ $logged_in = isset($_SESSION['user_id']);
     </a>
     <nav aria-label="Main navigation">
       <ul>
-        <li><a href="index.php#dashboards">Dashboards</a></li>
+        <li class="dashboards-menu">
+          <span class="dashboards-label">Dashboards</span>
+          <ul class="dashboards-dropdown" aria-label="Dashboard links">
+            <li><a href="dashboard1.php">Economic Hardship</a></li>
+            <li><a href="dashboard2.php">Housing &amp; Homelessness</a></li>
+            <li><a href="dashboard3.php">Health &amp; Wellbeing</a></li>
+          </ul>
+        </li>
         <li><a href="about.php">About Us</a></li>
         <?php if ($logged_in): ?>
           <li><a href="account.php">My Account</a></li>
