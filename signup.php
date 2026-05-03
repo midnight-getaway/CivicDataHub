@@ -1,10 +1,22 @@
 <?php
+/**
+ * signup.php — Registration page for creating new Civic Data Hub user accounts.
+ *
+ * Dependencies: Session support, db_connect.php, shared header include.
+ * Data sources: users table.
+ * Last updated: 2026-05-03
+ * Authors: Owen Sim, Kylie Mugrace, Keady Van Zandt
+ */
+
+// Start session so this page can share auth-aware navigation.
 session_start();
+// Load PDO connection and DB configuration state.
 require_once 'db_connect.php';
 
 $error = '';
 $success = '';
 
+// Handle registration form submission and validation flow.
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $email    = trim($_POST['email'] ?? '');
@@ -23,14 +35,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (!$db_configured) {
         $error = 'Database is not configured yet. Please check back later.';
     } else {
-        // Check if username or email already exists
+        // Check for existing account before inserting a new user row.
         $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
         $stmt->execute([$username, $email]);
 
         if ($stmt->fetch()) {
             $error = 'Username or email already exists.';
         } else {
-            // Hash the password and insert
+            // Hash password before storage and insert the new account.
             $hashed = password_hash($password, PASSWORD_DEFAULT);
             $insert = $pdo->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
 
@@ -48,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sign Up | Civic Data Hub</title>
+    <title>Civic Data Hub | Sign Up</title>
     <link rel="icon" href="assets/favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
     <link rel="icon" type="image/png" href="assets/favicon.png" />

@@ -1,9 +1,21 @@
 <?php
+/**
+ * login.php — Authentication page that validates existing users and starts an app session.
+ *
+ * Dependencies: Session support, db_connect.php, shared header include.
+ * Data sources: users table.
+ * Last updated: 2026-05-03
+ * Authors: Owen Sim, Kylie Mugrace, Keady Van Zandt
+ */
+
+// Start session so successful logins can store user identity.
 session_start();
+// Load PDO connection and DB configuration state.
 require_once 'db_connect.php';
 
 $error = '';
 
+// Handle login form submission and credential validation.
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $login    = trim($_POST['login'] ?? '');
     $password = $_POST['password'] ?? '';
@@ -13,14 +25,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (!$db_configured) {
         $error = 'Database is not configured yet. Please check back later.';
     } else {
-        // Look up user by username or email
+        // Fetch candidate user by username/email to verify password hash.
         $stmt = $pdo->prepare("SELECT id, username, password FROM users WHERE username = ? OR email = ?");
         $stmt->execute([$login, $login]);
         $row = $stmt->fetch();
 
         if ($row) {
             if (password_verify($password, $row['password'])) {
-                // Login successful — set session variables
+                // Login successful — persist user identity in session.
                 $_SESSION['user_id']  = $row['id'];
                 $_SESSION['username'] = $row['username'];
                 header("Location: index.php");
@@ -39,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Log In | Civic Data Hub</title>
+    <title>Civic Data Hub | Log In</title>
     <link rel="icon" href="assets/favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
     <link rel="icon" type="image/png" href="assets/favicon.png" />

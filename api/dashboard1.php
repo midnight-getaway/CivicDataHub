@@ -1,12 +1,11 @@
 <?php
 /**
- * api/dashboard1.php — JSON API for Economic Hardship dashboard.
+ * api/dashboard1.php — JSON API that serves trend, SNAP, comparison, and stat-card data for dashboard1.
  *
- * GET parameters:
- *   county_id   (required) — county id from counties table
- *   year_start  (optional) — default 2019
- *   year_end    (optional) — default 2023
- *   compare_ids (optional) — comma-separated county ids for overlay
+ * Dependencies: db_connect.php and PHP PDO.
+ * Data sources: economic_hardship, snap_enrollment, counties tables.
+ * Last updated: 2026-05-03
+ * Authors: Owen Sim, Kylie Mugrace, Keady Van Zandt
  */
 
 header('Content-Type: application/json');

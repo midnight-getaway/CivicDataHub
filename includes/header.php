@@ -1,7 +1,14 @@
 <?php
-// includes/header.php
-// Shared site header — include after session_start() has been called on the page.
-// Outputs the full <header> with session-aware navigation.
+/**
+ * includes/header.php — Shared site header and primary navigation markup.
+ *
+ * Dependencies: Requires an active PHP session from the parent page.
+ * Data sources: None.
+ * Last updated: 2026-05-03
+ * Authors: Owen Sim, Kylie Mugrace, Keady Van Zandt
+ */
+
+// Toggle auth-specific nav items based on session state.
 $logged_in = isset($_SESSION['user_id']);
 ?>
 <header class="site-header">
@@ -9,8 +16,11 @@ $logged_in = isset($_SESSION['user_id']);
     <a class="brand" href="index.php" aria-label="Civic Data Hub home">
       <img class="brand-logo" src="assets/logo.png" alt="Civic Data Hub" />
     </a>
+    <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav-links" aria-label="Toggle navigation menu">
+      <span></span><span></span><span></span>
+    </button>
     <nav aria-label="Main navigation">
-      <ul>
+      <ul id="site-nav-links">
         <li class="dashboards-menu">
           <span class="dashboards-label">Dashboards</span>
           <ul class="dashboards-dropdown" aria-label="Dashboard links">
@@ -31,3 +41,23 @@ $logged_in = isset($_SESSION['user_id']);
     </nav>
   </div>
 </header>
+<script>
+  /**
+   * includes/header.php — Mobile navigation toggle behavior.
+   * Charts: None.
+   * Filters: None.
+   * Dependencies: Native DOM APIs only.
+   */
+  (function () {
+    const toggleBtn = document.getElementById('nav-toggle');
+    const navLinks = document.getElementById('site-nav-links');
+    if (!toggleBtn || !navLinks) return;
+
+    // Expand/collapse the mobile menu when the hamburger button is clicked.
+    toggleBtn.addEventListener('click', function () {
+      const expanded = this.getAttribute('aria-expanded') === 'true';
+      this.setAttribute('aria-expanded', String(!expanded));
+      navLinks.classList.toggle('open', !expanded);
+    });
+  })();
+</script>

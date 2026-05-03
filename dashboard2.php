@@ -1,6 +1,19 @@
 <?php
+/**
+ * dashboard2.php — Housing & Homelessness dashboard with county housing burden and regional homelessness trends.
+ *
+ * Dependencies: Session support, db_connect.php, includes/header.php, Chart.js CDN.
+ * Data sources: counties table (page bootstrapping), api/dashboard2.php, api/save_view.php.
+ * Last updated: 2026-05-03
+ * Authors: Owen Sim, Kylie Mugrace, Keady Van Zandt
+ */
+
+// Start session so auth-aware actions (save view) can be gated correctly.
 session_start();
+session_write_close(); // Release the session lock immediately
+// Load shared DB connection for county filter bootstrapping.
 require_once 'db_connect.php';
+$is_embed = (isset($_GET['embed']) && $_GET['embed'] === '1');
 
 $counties = [];
 if ($pdo) {
@@ -13,7 +26,7 @@ if ($pdo) {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Housing & Homelessness | Civic Data Hub</title>
+  <title>Civic Data Hub | Housing & Homelessness</title>
   <link rel="icon" href="assets/favicon.ico" sizes="any" />
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
   <link rel="icon" type="image/png" href="assets/favicon.png" />
@@ -22,8 +35,8 @@ if ($pdo) {
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 </head>
 
-<body>
-  <?php require 'includes/header.php'; ?>
+<body class="<?= $is_embed ? 'embed-preview' : '' ?>">
+  <?php if (!$is_embed) require 'includes/header.php'; ?>
 
   <main class="dashboard-layout">
     <div class="container">
@@ -63,6 +76,11 @@ if ($pdo) {
               <?php endfor; ?>
             </select>
           </div>
+
+          <div class="filter-group view-actions">
+            <button class="btn save-view-btn">Save View</button>
+            <button class="btn share-view-btn">Share this View</button>
+          </div>
         </div>
 
         <div class="stat-cards section-stat-cards-single">
@@ -78,7 +96,7 @@ if ($pdo) {
           <div class="chart-card">
             <h2>Households Spending 30%+ of Income on Housing</h2>
             <p class="muted-text">By county — U.S. Census Bureau ACS 5-Year Estimate</p>
-            <canvas id="housing-chart"></canvas>
+            <div class="chart-canvas-wrap"><canvas id="housing-chart"></canvas></div>
           </div>
           <div class="chart-card">
             <h2>How does this county compare?</h2>
@@ -153,6 +171,11 @@ if ($pdo) {
             </select>
           </div>
 
+          <div class="filter-group view-actions">
+            <button class="btn save-view-btn">Save View</button>
+            <button class="btn share-view-btn">Share this View</button>
+          </div>
+
         </div>
 
         <div class="stat-cards section-stat-cards-two">
@@ -174,7 +197,7 @@ if ($pdo) {
           <div class="chart-card">
             <h2 id="shelter-title">Sheltered vs. Unsheltered</h2>
             <p class="muted-text">Annual count for selected region</p>
-            <canvas id="shelter-chart"></canvas>
+            <div class="chart-canvas-wrap"><canvas id="shelter-chart"></canvas></div>
           </div>
           <div class="chart-card">
             <h2>Who is experiencing homelessness?</h2>
@@ -213,7 +236,7 @@ if ($pdo) {
           <div class="chart-card">
             <h2>Total Homeless Population Over Time</h2>
             <p class="muted-text" id="trend-dynamic-subtitle">Indexed to 2019 baseline — shows percent change, not raw counts. Hover for actual numbers.</p>
-            <canvas id="trend-chart"></canvas>
+            <div class="chart-canvas-wrap"><canvas id="trend-chart"></canvas></div>
           </div>
         </div>
 
@@ -221,7 +244,7 @@ if ($pdo) {
           <div class="chart-card">
             <h2 id="ranking-title">All NYS Regions Ranked by Total Homeless</h2>
             <p class="muted-text">Average annual count across selected year range</p>
-            <canvas id="ranking-chart"></canvas>
+            <div class="chart-canvas-wrap"><canvas id="ranking-chart"></canvas></div>
             <label for="exclude-nyc" class="ranking-toggle">
               <input type="checkbox" id="exclude-nyc" />
               Exclude New York City (its counts are much larger than other regions and may compress the chart scale)
@@ -234,8 +257,39 @@ if ($pdo) {
       </p>
     </div>
   </main>
+  <?php if ($is_embed): ?>
+    <style>
+      .embed-preview .dashboard-layout { padding: 0.45rem 0.55rem; }
+      .embed-preview .dashboard-layout h1,
+      .embed-preview .dashboard-layout > .container > .muted-text,
+      .embed-preview .dashboard-section:first-child,
+      .embed-preview .dashboard-section .filter-bar,
+      .embed-preview .dashboard-section .stat-cards,
+      .embed-preview .dashboard-section .chart-grid:first-of-type,
+      .embed-preview .dashboard-section .chart-grid:nth-of-type(3),
+      .embed-preview .dashboard-section .chart-grid:nth-of-type(4),
+      .embed-preview .dashboard-layout > .container > p.muted-text { display: none; }
+      .embed-preview .dashboard-section {
+        margin-top: 0;
+        padding: 0;
+        border: none;
+        background: transparent;
+      }
+      .embed-preview .dashboard-section .section-title,
+      .embed-preview .dashboard-section > .muted-text { display: none; }
+      .embed-preview .dashboard-section .chart-grid { grid-template-columns: 1fr; gap: 0; margin-top: 0 !important; }
+      .embed-preview .chart-card { border: none; box-shadow: none; padding: 0.3rem; }
+      .embed-preview #trend-chart { max-height: 320px; }
+    </style>
+  <?php endif; ?>
 
   <script>
+    /**
+     * dashboard2.php — Housing/Homelessness dashboard client-side controller.
+     * Charts: housingChart (line), shelterChart (stacked bar), trendChart (indexed line), rankingChart (horizontal bar).
+     * Filters: county-select, housing-year-start/end, coc-select, homeless-year-start/end, homeless-view, exclude-nyc.
+     * Dependencies: Chart.js v4, api/dashboard2.php, api/save_view.php.
+     */
     const COLORS = ['#233dff', '#dc2626', '#16a34a', '#ea580c'];
 
     const housingChart = new Chart(document.getElementById('housing-chart').getContext('2d'), {
@@ -243,6 +297,7 @@ if ($pdo) {
       data: { labels: [], datasets: [] },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: { legend: { display: true } },
         scales: {
           y: { beginAtZero: true, title: { display: true, text: 'Rate (%)' } }
@@ -255,6 +310,7 @@ if ($pdo) {
       data: { labels: [], datasets: [] },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: { legend: { display: true } },
         scales: {
           x: { stacked: true },
@@ -388,6 +444,7 @@ if ($pdo) {
       data: { labels: [], datasets: [] },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
           legend: { display: true },
           tooltip: {
@@ -434,6 +491,7 @@ if ($pdo) {
       data: { labels: [], datasets: [] },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         indexAxis: 'y',
         plugins: { legend: { display: false } },
         scales: {
@@ -659,9 +717,24 @@ if ($pdo) {
       const cocNumber = document.getElementById('coc-select').value;
       const yearStart = document.getElementById('housing-year-start').value;
       const yearEnd = document.getElementById('housing-year-end').value;
+      const homelessView = document.getElementById('homeless-view').value;
       const excludeNyc = document.getElementById('exclude-nyc').checked ? '1' : '0';
 
       const url = `api/dashboard2.php?county_id=${countyId}&coc_number=${encodeURIComponent(cocNumber)}&year_start=${yearStart}&year_end=${yearEnd}&exclude_nyc=${excludeNyc}`;
+
+      // Update browser URL silently so users can copy-paste it
+      const newUrl = new URL(window.location);
+      newUrl.searchParams.set('county_id', countyId);
+      newUrl.searchParams.set('coc_number', cocNumber);
+      newUrl.searchParams.set('year_start', yearStart);
+      newUrl.searchParams.set('year_end', yearEnd);
+      newUrl.searchParams.set('homeless_view', homelessView);
+      if (excludeNyc === '1') {
+        newUrl.searchParams.set('exclude_nyc', '1');
+      } else {
+        newUrl.searchParams.delete('exclude_nyc');
+      }
+      window.history.replaceState({}, '', newUrl);
 
       fetch(url)
         .then(res => res.json())
@@ -702,6 +775,105 @@ if ($pdo) {
     });
     document.getElementById('homeless-view').addEventListener('change', fetchDashboard);
     document.getElementById('exclude-nyc').addEventListener('change', fetchDashboard);
+
+    // Save view logic
+    function handleSaveView() {
+      <?php if (!isset($_SESSION['user_id'])): ?>
+        window.location.href = 'login.php';
+        return;
+      <?php endif; ?>
+
+      const viewName = prompt("Enter a name for this saved view:");
+      if (!viewName) return;
+
+      const filters = {
+        county_id: document.getElementById('county-select').value,
+        coc_number: document.getElementById('coc-select').value,
+        year_start: document.getElementById('housing-year-start').value,
+        year_end: document.getElementById('housing-year-end').value,
+        homeless_view: document.getElementById('homeless-view').value,
+        exclude_nyc: document.getElementById('exclude-nyc').checked ? '1' : '0'
+      };
+
+      fetch('api/save_view.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          view_name: viewName,
+          dashboard_url: 'dashboard2.php',
+          dashboard_name: 'Housing & Homelessness',
+          filters: filters
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          alert("View saved successfully!");
+        } else {
+          alert("Error saving view: " + (data.error || "Unknown error"));
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert("An error occurred while saving.");
+      });
+    }
+
+    document.querySelectorAll('.save-view-btn').forEach(btn => {
+      btn.addEventListener('click', handleSaveView);
+    });
+
+    // Copy the current filter URL so this exact dashboard state can be shared.
+    async function copyCurrentViewLink() {
+      const shareUrl = window.location.href;
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(shareUrl);
+        } else {
+          const tempInput = document.createElement('textarea');
+          tempInput.value = shareUrl;
+          document.body.appendChild(tempInput);
+          tempInput.select();
+          document.execCommand('copy');
+          document.body.removeChild(tempInput);
+        }
+        alert('Share link copied to clipboard.');
+      } catch (err) {
+        console.error('Copy failed:', err);
+        prompt('Copy this link:', shareUrl);
+      }
+    }
+
+    document.querySelectorAll('.share-view-btn').forEach(btn => {
+      btn.addEventListener('click', copyCurrentViewLink);
+    });
+
+    // Initialize filters from URL parameters
+    function initFiltersFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.has('county_id')) document.getElementById('county-select').value = params.get('county_id');
+      if (params.has('coc_number')) {
+        const cocSelect = document.getElementById('coc-select');
+        const cocValue = params.get('coc_number');
+        if (![...cocSelect.options].some(o => o.value === cocValue)) {
+          const temp = document.createElement('option');
+          temp.value = cocValue;
+          temp.textContent = cocValue;
+          cocSelect.appendChild(temp);
+        }
+        cocSelect.value = cocValue;
+      }
+      if (params.has('year_start')) {
+        document.getElementById('housing-year-start').value = params.get('year_start');
+        document.getElementById('homeless-year-start').value = params.get('year_start');
+      }
+      if (params.has('year_end')) {
+        document.getElementById('housing-year-end').value = params.get('year_end');
+        document.getElementById('homeless-year-end').value = params.get('year_end');
+      }
+      if (params.has('homeless_view')) document.getElementById('homeless-view').value = params.get('homeless_view');
+      if (params.has('exclude_nyc')) document.getElementById('exclude-nyc').checked = params.get('exclude_nyc') === '1';
+    }
 
     function setupHelpTooltips() {
       const floating = document.createElement('div');
@@ -812,6 +984,7 @@ if ($pdo) {
 
     setupHelpTooltips();
     setupTrendBandTooltip();
+    initFiltersFromUrl();
     fetchDashboard();
   </script>
 </body>

@@ -1,13 +1,11 @@
 <?php
 /**
- * api/dashboard2.php — JSON API for Housing & Homelessness dashboard.
+ * api/dashboard2.php — JSON API that serves housing burden and homelessness trend data for dashboard2.
  *
- * GET parameters:
- *   county_id     (required) — county id from counties table
- *   coc_number    (optional) — CoC code (default NY-503)
- *   year_start    (optional) — default 2019
- *   year_end      (optional) — default 2023
- *   exclude_nyc   (optional) — 1 to exclude NY-600 from rankings
+ * Dependencies: db_connect.php, PHP PDO, Census ACS endpoint.
+ * Data sources: counties and hud_pit_nys tables, U.S. Census ACS API (B25070).
+ * Last updated: 2026-05-03
+ * Authors: Owen Sim, Kylie Mugrace, Keady Van Zandt
  */
 
 header('Content-Type: application/json');

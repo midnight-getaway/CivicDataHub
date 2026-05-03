@@ -1,8 +1,19 @@
 <?php
+/**
+ * account.php — User account page showing profile details and saved dashboard views.
+ *
+ * Dependencies: Session support, db_connect.php, includes/header.php.
+ * Data sources: users, saved_views tables.
+ * Last updated: 2026-05-03
+ * Authors: Owen Sim, Kylie Mugrace, Keady Van Zandt
+ */
+
+// Start session to enforce account access permissions.
 session_start();
+// Load PDO connection and DB configuration state.
 require_once 'db_connect.php';
 
-// Redirect to login if not signed in
+// Redirect unauthenticated visitors to login.
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit;
@@ -15,7 +26,7 @@ $saved_views = [];
 $greeting_title = 'My Account';
 
 if ($db_configured) {
-    // Fetch account details
+    // Fetch profile metadata for the current authenticated user.
     $stmt = $pdo->prepare("SELECT username, email, created_at FROM users WHERE id = ?");
     $stmt->execute([$_SESSION['user_id']]);
     $row = $stmt->fetch();
@@ -26,7 +37,7 @@ if ($db_configured) {
         $created_at = date('F j, Y', strtotime($row['created_at']));
     }
 
-    // Fetch saved data views
+    // Fetch saved dashboard view presets for account display.
     $views_stmt = $pdo->prepare("SELECT id, view_name, dashboard_name, dashboard_url, filters, created_at FROM saved_views WHERE user_id = ? ORDER BY created_at DESC");
     $views_stmt->execute([$_SESSION['user_id']]);
     $saved_views = $views_stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -49,7 +60,7 @@ if ($name_source !== '' && strpos($name_source, '@') === false) {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Account | Civic Data Hub</title>
+    <title>Civic Data Hub | My Account</title>
     <link rel="icon" href="assets/favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
     <link rel="icon" type="image/png" href="assets/favicon.png" />
@@ -107,7 +118,6 @@ if ($name_source !== '' && strpos($name_source, '@') === false) {
                   <a href="dashboard1.php" class="btn">Economic Hardship</a>
                   <a href="dashboard2.php" class="btn">Housing &amp; Homelessness</a>
                   <a href="dashboard3.php" class="btn">Health &amp; Wellbeing</a>
-                  <a href="#" class="btn">Education &amp; Youth</a>
                 </div>
               </div>
             <?php else: ?>
@@ -136,11 +146,19 @@ if ($name_source !== '' && strpos($name_source, '@') === false) {
     </main>
     
     <script>
+      /**
+       * account.php — Saved view deletion handlers.
+       * Charts: None.
+       * Filters: Delete action per saved view tile.
+       * Dependencies: fetch API and api/delete_view.php.
+       */
+      // Bind a click handler to each delete button in saved view cards.
       document.querySelectorAll('.delete-view-btn').forEach(btn => {
         btn.addEventListener('click', function() {
           if (!confirm("Are you sure you want to delete this view?")) return;
           
           const viewId = this.getAttribute('data-id');
+          // Call API endpoint to remove the selected saved view from the database.
           fetch('api/delete_view.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

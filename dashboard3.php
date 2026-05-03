@@ -1,7 +1,19 @@
 <?php
+/**
+ * dashboard3.php — Health & Wellbeing dashboard page with county comparisons and ranking views.
+ *
+ * Dependencies: Session support, db_connect.php, includes/header.php, Chart.js CDN.
+ * Data sources: counties table (page bootstrapping), api/dashboard3.php, api/save_view.php.
+ * Last updated: 2026-05-03
+ * Authors: Owen Sim, Kylie Mugrace, Keady Van Zandt
+ */
+
+// Start session so auth-aware actions (save view) can be gated correctly.
 session_start();
 session_write_close(); // Release the session lock immediately
+// Load shared DB connection for county filter bootstrapping.
 require_once 'db_connect.php';
+$is_embed = (isset($_GET['embed']) && $_GET['embed'] === '1');
 
 // Get all counties for the dropdown
 $counties = [];
@@ -15,7 +27,7 @@ if ($pdo) {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Health & Wellbeing | Civic Data Hub</title>
+  <title>Civic Data Hub | Health & Wellbeing</title>
   <link rel="icon" href="assets/favicon.ico" sizes="any" />
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
   <link rel="icon" type="image/png" href="assets/favicon.png" />
@@ -24,8 +36,8 @@ if ($pdo) {
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 </head>
 
-<body>
-  <?php require 'includes/header.php'; ?>
+<body class="<?= $is_embed ? 'embed-preview' : '' ?>">
+  <?php if (!$is_embed) require 'includes/header.php'; ?>
 
   <main class="dashboard-layout">
     <div class="container">
@@ -75,8 +87,9 @@ if ($pdo) {
           </select>
         </div>
 
-        <div class="filter-group" style="justify-content: flex-end;">
-          <button id="save-view-btn" class="btn" style="padding: 0.45rem 1rem;">Save View</button>
+        <div class="filter-group view-actions">
+          <button id="save-view-btn" class="btn">Save View</button>
+          <button id="share-view-btn" class="btn">Share this View</button>
         </div>
       </div>
 
@@ -100,11 +113,11 @@ if ($pdo) {
       <div class="chart-grid">
         <div class="chart-card">
           <h2>Health Indicators (%)</h2>
-          <canvas id="health-chart"></canvas>
+          <div class="chart-canvas-wrap"><canvas id="health-chart"></canvas></div>
         </div>
         <div class="chart-card">
           <h2>Opioid Mortality Trend</h2>
-          <canvas id="opioid-chart"></canvas>
+          <div class="chart-canvas-wrap"><canvas id="opioid-chart"></canvas></div>
         </div>
       </div>
 
@@ -122,9 +135,30 @@ if ($pdo) {
       </p>
     </div>
   </main>
+  <?php if ($is_embed): ?>
+    <style>
+      .embed-preview .dashboard-layout { padding: 0.5rem 0.6rem; }
+      .embed-preview .dashboard-layout h1,
+      .embed-preview .dashboard-layout > .container > .muted-text,
+      .embed-preview .filter-bar,
+      .embed-preview .stat-cards,
+      .embed-preview .chart-grid .chart-card:nth-child(2),
+      .embed-preview .chart-grid[style*="margin-top"],
+      .embed-preview .dashboard-layout > .container > p.muted-text { display: none; }
+      .embed-preview .chart-grid { grid-template-columns: 1fr; gap: 0; }
+      .embed-preview .chart-card { border: none; box-shadow: none; padding: 0.35rem; }
+      .embed-preview #health-chart { max-height: 320px; }
+    </style>
+  <?php endif; ?>
 
   <script>
-    // ── Chart.js setup ───────────────────────
+    /**
+     * dashboard3.php — Health dashboard client-side controller.
+     * Charts: healthChart (bar), opioidChart (line), rankingChart (horizontal bar).
+     * Filters: county-select, year-select, ranking-select, compare-select.
+     * Dependencies: Chart.js v4, api/dashboard3.php, api/save_view.php.
+     */
+    // Shared chart color palette for primary and comparison series.
     const COLORS = ['#233dff', '#dc2626', '#16a34a', '#ea580c', '#8b5cf6', '#eab308'];
 
     // Health grouped bar chart
@@ -134,6 +168,7 @@ if ($pdo) {
       data: { labels: [], datasets: [] },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: { legend: { display: true } },
         scales: {
           y: { beginAtZero: true, title: { display: true, text: 'Prevalence (%)' } }
@@ -148,6 +183,7 @@ if ($pdo) {
       data: { labels: [], datasets: [] },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: { legend: { display: true } },
         scales: {
           y: { beginAtZero: true, title: { display: true, text: 'Opioid Deaths' } }
@@ -171,7 +207,7 @@ if ($pdo) {
       }
     });
 
-    // ── Data fetching ────────────────────────
+    // Fetch API payload and redraw all stat cards/charts.
     function fetchDashboard() {
       const countyId  = document.getElementById('county-select').value;
       const year      = document.getElementById('year-select').value;
@@ -193,6 +229,7 @@ if ($pdo) {
       }
       window.history.replaceState({}, '', newUrl);
 
+      // API call: api/dashboard3.php returns measures, trends, ranking, and stat cards.
       fetch(url)
         .then(res => res.json())
         .then(data => {
@@ -302,6 +339,29 @@ if ($pdo) {
     document.getElementById('year-select').addEventListener('change', fetchDashboard);
     document.getElementById('ranking-select').addEventListener('change', fetchDashboard);
     document.getElementById('compare-select').addEventListener('change', fetchDashboard);
+
+    // Copy the current filter URL so this exact dashboard state can be shared.
+    async function copyCurrentViewLink() {
+      const shareUrl = window.location.href;
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(shareUrl);
+        } else {
+          const tempInput = document.createElement('textarea');
+          tempInput.value = shareUrl;
+          document.body.appendChild(tempInput);
+          tempInput.select();
+          document.execCommand('copy');
+          document.body.removeChild(tempInput);
+        }
+        alert('Share link copied to clipboard.');
+      } catch (err) {
+        console.error('Copy failed:', err);
+        prompt('Copy this link:', shareUrl);
+      }
+    }
+
+    document.getElementById('share-view-btn').addEventListener('click', copyCurrentViewLink);
 
     // Save view logic
     document.getElementById('save-view-btn').addEventListener('click', () => {

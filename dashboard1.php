@@ -1,7 +1,19 @@
 <?php
+/**
+ * dashboard1.php — Economic Hardship dashboard page with county filters, charts, and save-view support.
+ *
+ * Dependencies: Session support, db_connect.php, includes/header.php, Chart.js CDN.
+ * Data sources: counties table (page bootstrapping), api/dashboard1.php, api/save_view.php.
+ * Last updated: 2026-05-03
+ * Authors: Owen Sim, Kylie Mugrace, Keady Van Zandt
+ */
+
+// Start session so auth-aware actions (save view) can be gated correctly.
 session_start();
 session_write_close(); // Release the session lock immediately
+// Load shared DB connection for county filter bootstrapping.
 require_once 'db_connect.php';
+$is_embed = (isset($_GET['embed']) && $_GET['embed'] === '1');
 
 // Get all counties for the dropdown
 $counties = [];
@@ -15,7 +27,7 @@ if ($pdo) {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Economic Hardship | Civic Data Hub</title>
+  <title>Civic Data Hub | Economic Hardship</title>
   <link rel="icon" href="assets/favicon.ico" sizes="any" />
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
   <link rel="icon" type="image/png" href="assets/favicon.png" />
@@ -24,8 +36,8 @@ if ($pdo) {
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 </head>
 
-<body>
-  <?php require 'includes/header.php'; ?>
+<body class="<?= $is_embed ? 'embed-preview' : '' ?>">
+  <?php if (!$is_embed) require 'includes/header.php'; ?>
 
   <main class="dashboard-layout">
     <div class="container">
@@ -33,7 +45,7 @@ if ($pdo) {
       <p class="muted-text">Poverty rates, median household income, unemployment, and SNAP enrollment across New York State counties.</p>
 
       <!-- Filter Bar -->
-      <div class="filter-bar">
+      <div class="filter-bar dashboard1-filter-bar">
         <div class="filter-group">
           <label for="county-select">County</label>
           <select id="county-select">
@@ -82,8 +94,9 @@ if ($pdo) {
           </select>
         </div>
 
-        <div class="filter-group" style="justify-content: flex-end;">
-          <button id="save-view-btn" class="btn" style="padding: 0.45rem 1rem;">Save View</button>
+        <div class="filter-group view-actions dashboard1-view-actions">
+          <button id="save-view-btn" class="btn dashboard1-save-btn">Save View</button>
+          <button id="share-view-btn" class="btn dashboard1-share-btn">Share this View</button>
         </div>
       </div>
 
@@ -107,11 +120,11 @@ if ($pdo) {
       <div class="chart-grid">
         <div class="chart-card">
           <h2>Trend Over Time</h2>
-          <canvas id="trend-chart"></canvas>
+          <div class="chart-canvas-wrap"><canvas id="trend-chart"></canvas></div>
         </div>
         <div class="chart-card">
           <h2>SNAP Enrollment</h2>
-          <canvas id="snap-chart"></canvas>
+          <div class="chart-canvas-wrap"><canvas id="snap-chart"></canvas></div>
         </div>
       </div>
 
@@ -120,9 +133,29 @@ if ($pdo) {
       </p>
     </div>
   </main>
+  <?php if ($is_embed): ?>
+    <style>
+      .embed-preview .dashboard-layout { padding: 0.5rem 0.6rem; }
+      .embed-preview .dashboard-layout h1,
+      .embed-preview .dashboard-layout > .container > .muted-text,
+      .embed-preview .filter-bar,
+      .embed-preview .stat-cards,
+      .embed-preview .chart-grid .chart-card:nth-child(2),
+      .embed-preview .dashboard-layout > .container > p.muted-text { display: none; }
+      .embed-preview .chart-grid { grid-template-columns: 1fr; gap: 0; }
+      .embed-preview .chart-card { border: none; box-shadow: none; padding: 0.35rem; }
+      .embed-preview #trend-chart { max-height: 320px; }
+    </style>
+  <?php endif; ?>
 
   <script>
-    // Chart.js setup
+    /**
+     * dashboard1.php — Economic Hardship dashboard interactions.
+     * Charts: trendChart (line), snapChart (stacked bar).
+     * Filters: county-select, year-start, year-end, metric-select, compare-select.
+     * Dependencies: Chart.js v4, api/dashboard1.php, api/save_view.php.
+     */
+    // Shared palette for county and comparison series.
     const COLORS = ['#233dff', '#dc2626', '#16a34a', '#ea580c'];
 
     // Trend line chart
@@ -132,6 +165,7 @@ if ($pdo) {
       data: { labels: [], datasets: [] },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: { legend: { display: true } },
         scales: {
           y: { beginAtZero: false }
@@ -146,6 +180,7 @@ if ($pdo) {
       data: { labels: [], datasets: [] },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: { legend: { display: true } },
         scales: {
           x: { stacked: true },
@@ -154,7 +189,7 @@ if ($pdo) {
       }
     });
 
-    // Data fetching
+    // Fetch dashboard payload from API and refresh cards/charts.
     function fetchDashboard() {
       const countyId  = document.getElementById('county-select').value;
       const yearStart = document.getElementById('year-start').value;
@@ -178,6 +213,7 @@ if ($pdo) {
       }
       window.history.replaceState({}, '', newUrl);
 
+      // API call: api/dashboard1.php returns county metrics and chart arrays.
       fetch(url)
         .then(res => res.json())
         .then(data => {
@@ -251,14 +287,37 @@ if ($pdo) {
       snapChart.update();
     }
 
-    // Event listeners
+    // Re-fetch dashboard whenever filters change.
     document.getElementById('county-select').addEventListener('change', fetchDashboard);
     document.getElementById('year-start').addEventListener('change', fetchDashboard);
     document.getElementById('year-end').addEventListener('change', fetchDashboard);
     document.getElementById('metric-select').addEventListener('change', fetchDashboard);
     document.getElementById('compare-select').addEventListener('change', fetchDashboard);
 
-    // Save view logic
+    // Copy the current filter URL so this exact view can be shared with others.
+    async function copyCurrentViewLink() {
+      const shareUrl = window.location.href;
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(shareUrl);
+        } else {
+          const tempInput = document.createElement('textarea');
+          tempInput.value = shareUrl;
+          document.body.appendChild(tempInput);
+          tempInput.select();
+          document.execCommand('copy');
+          document.body.removeChild(tempInput);
+        }
+        alert('Share link copied to clipboard.');
+      } catch (err) {
+        console.error('Copy failed:', err);
+        prompt('Copy this link:', shareUrl);
+      }
+    }
+
+    document.getElementById('share-view-btn').addEventListener('click', copyCurrentViewLink);
+
+    // Save the current filter state to the authenticated user's account.
     document.getElementById('save-view-btn').addEventListener('click', () => {
       <?php if (!isset($_SESSION['user_id'])): ?>
         window.location.href = 'login.php';
@@ -276,6 +335,7 @@ if ($pdo) {
         compare_ids: document.getElementById('compare-select').value
       };
 
+      // API call: api/save_view.php stores filter JSON and dashboard metadata.
       fetch('api/save_view.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
