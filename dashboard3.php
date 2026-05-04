@@ -32,7 +32,7 @@ if ($pdo) {
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
   <link rel="icon" type="image/png" href="assets/favicon.png" />
   <link rel="apple-touch-icon" href="assets/favicon.png" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=5" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 </head>
 
@@ -124,8 +124,10 @@ if ($pdo) {
       <div class="chart-grid" style="margin-top: 1.5rem; grid-template-columns: 1fr;">
         <div class="chart-card">
           <h2 id="ranking-title">County Ranking</h2>
-          <div style="height: 400px; overflow-y: auto;">
-            <canvas id="ranking-chart"></canvas>
+          <div id="ranking-chart-container" style="max-height: 600px; overflow-y: auto; overflow-x: hidden;">
+            <div id="ranking-chart-sizer" style="position: relative; width: 100%;">
+              <canvas id="ranking-chart"></canvas>
+            </div>
           </div>
         </div>
       </div>
@@ -191,21 +193,9 @@ if ($pdo) {
       }
     });
 
-    // Ranking horizontal bar chart
-    const rankingCtx = document.getElementById('ranking-chart').getContext('2d');
-    const rankingChart = new Chart(rankingCtx, {
-      type: 'bar',
-      data: { labels: [], datasets: [] },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        indexAxis: 'y', // Horizontal bar chart
-        plugins: { legend: { display: false } },
-        scales: {
-          x: { beginAtZero: true }
-        }
-      }
-    });
+    // Ranking chart — destroyed and recreated on each data load so we can
+    // set an explicit pixel height that CSS !important rules cannot override.
+    let rankingChart = null;
 
     // Fetch API payload and redraw all stat cards/charts.
     function fetchDashboard() {
@@ -314,24 +304,43 @@ if ($pdo) {
       const rankingSelect = document.getElementById('ranking-select');
       const measureName = rankingSelect.options[rankingSelect.selectedIndex].text;
       document.getElementById('ranking-title').textContent = measureName + ' by County (%)';
-      
+
       const labels = data.ranking.map(r => r.county);
       const values = data.ranking.map(r => r.value);
-      
-      // Highlight the selected county
       const bgColors = labels.map(label => label === data.county ? COLORS[3] : COLORS[0] + '99');
 
-      rankingChart.data.labels = labels;
-      rankingChart.data.datasets = [{
-        data: values,
-        backgroundColor: bgColors
-      }];
-      
-      // Resize container based on data length to prevent squishing
-      const container = document.getElementById('ranking-chart').parentNode;
-      container.style.height = (labels.length * 20) + 'px';
-      
-      rankingChart.update();
+      // Compute the height needed to give each bar adequate room.
+      const rowHeight = window.innerWidth <= 600 ? 28 : 32;
+      const computedHeight = Math.max(labels.length * rowHeight, 500);
+
+      // Destroy the previous instance so Chart.js starts clean.
+      if (rankingChart) rankingChart.destroy();
+
+      // Set canvas size via DOM attributes — this bypasses all CSS rules,
+      // including !important overrides that would otherwise clamp the height.
+      const canvas = document.getElementById('ranking-chart');
+      const containerWidth = canvas.parentNode.offsetWidth || 600;
+      canvas.width  = containerWidth;
+      canvas.height = computedHeight;
+
+      // Also update the sizer wrapper so the scroll container knows the real height.
+      document.getElementById('ranking-chart-sizer').style.height = computedHeight + 'px';
+
+      rankingChart = new Chart(canvas.getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{ data: values, backgroundColor: bgColors }]
+        },
+        options: {
+          responsive: false,       // Use explicit canvas.width / canvas.height
+          maintainAspectRatio: false,
+          indexAxis: 'y',
+          animation: { duration: 400 },
+          plugins: { legend: { display: false } },
+          scales: { x: { beginAtZero: true } }
+        }
+      });
     }
 
     // ── Event listeners ──────────────────────
