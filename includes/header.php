@@ -44,9 +44,8 @@ $logged_in = isset($_SESSION['user_id']);
 <script>
   /**
    * includes/header.php — Mobile navigation toggle behavior.
-   * Charts: None.
-   * Filters: None.
-   * Dependencies: Native DOM APIs only.
+   * Last updated: 2026-05-05
+   * Authors: Owen Sim, Kylie Mugrace, Keady Van Zandt
    */
   (function () {
     const toggleBtn = document.getElementById('nav-toggle');
