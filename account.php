@@ -65,7 +65,7 @@ if ($name_source !== '' && strpos($name_source, '@') === false) {
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
     <link rel="icon" type="image/png" href="assets/favicon.png" />
     <link rel="apple-touch-icon" href="assets/favicon.png" />
-    <link rel="stylesheet" href="styles.css?v=2" />
+    <link rel="stylesheet" href="styles.css?v=5" />
   </head>
   <body>
     <?php require 'includes/header.php'; ?>
