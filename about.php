@@ -8,8 +8,9 @@
  * Authors: Owen Sim, Kylie Mugrace, Keady Van Zandt
  */
 
-// Start session for shared navigation state.
+// Start session, release session lock
 session_start();
+session_write_close();
 ?>
 <!doctype html>
 <html lang="en">
@@ -22,32 +23,29 @@ session_start();
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
   <link rel="icon" type="image/png" href="assets/favicon.png" />
   <link rel="apple-touch-icon" href="assets/favicon.png" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=1" />
 </head>
 
 <body>
-  <!-- Include the shared site header for consistent navigation across pages. -->
+  <!-- Page header -->
   <?php require 'includes/header.php'; ?>
 
   <main class="about-layout">
-    <!-- Constrain About page content width for improved readability. -->
+    <!-- Container for About page content -->
     <div class="container about-container">
 
       <section class="about-intro">
-        <!-- Primary About page title for context and page identity. -->
         <h1>About Us</h1>
-        <!-- Short supporting subline to describe the project mission quickly. -->
         <p class="about-subline">Built by students. Powered by public data. Designed for the people doing the work.</p>
-        <!-- Accent divider to visually separate the title block from body content. -->
         <div class="about-accent-rule" aria-hidden="true"></div>
-        <!-- First body paragraph preserves existing About copy while improving scanability. -->
+        <!-- First body paragraph -->
         <p class="about-copy">Civic Data Hub is a web-based platform designed to make New York State data more accessible,
           meaningful, and actionable. By aggregating trusted state-level datasets into interactive dashboards
           with advanced filtering, we empower users to explore trends across regions, populations, and
           timeframes, all in one place. Whether you're analyzing shifts in public health, education, housing,
           or civic infrastructure, Civic Data Hub transforms raw data into clear, shareable insights that
           support evidence-based planning and policy decisions.</p>
-        <!-- Second body paragraph preserves existing About copy while reducing visual density. -->
+        <!-- Second body paragraph -->
         <p class="about-copy">This project was built by a group of
           college students as part of a Web Design and Development course project, driven by the belief that
           open data should be genuinely usable, not just available. We created Civic Data Hub to bridge the
@@ -56,9 +54,8 @@ session_start();
           with ease, making it simpler than ever to turn data into decisions that matter.</p>
       </section>
 
-      <!-- Team section heading introduces contributor profile cards. -->
+      <!-- Team section - Portraits of team members, brief descriptions -->
       <h2 class="about-team-heading">Meet the Team</h2>
-      <!-- Team member card grid keeps existing content and images in a cleaner visual container. -->
       <section class="about-row">
         <div class="about-column about-card team-card">
           <img src="assets/Portrait-OS.png" alt="Portrait of Owen Sim" class="portrait" />

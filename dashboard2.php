@@ -8,9 +8,9 @@
  * Authors: Owen Sim, Kylie Mugrace, Keady Van Zandt
  */
 
-// Start session so auth-aware actions (save view) can be gated correctly.
+// Start session (determine save view behavior), release session lock
 session_start();
-session_write_close(); // Release the session lock immediately
+session_write_close();
 // Load shared DB connection for county filter bootstrapping.
 require_once 'db_connect.php';
 $is_embed = (isset($_GET['embed']) && $_GET['embed'] === '1');
@@ -31,7 +31,7 @@ if ($pdo) {
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
   <link rel="icon" type="image/png" href="assets/favicon.png" />
   <link rel="apple-touch-icon" href="assets/favicon.png" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=1" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 </head>
 
@@ -244,7 +244,9 @@ if ($pdo) {
           <div class="chart-card">
             <h2 id="ranking-title">All NYS Regions Ranked by Total Homeless</h2>
             <p class="muted-text">Average annual count across selected year range</p>
-            <div class="chart-canvas-wrap"><canvas id="ranking-chart"></canvas></div>
+            <div id="d2-ranking-container" style="max-height: 600px; overflow-y: auto; overflow-x: hidden;">
+              <div id="d2-ranking-sizer" style="position: relative; width: 100%;"><canvas id="ranking-chart"></canvas></div>
+            </div>
             <label for="exclude-nyc" class="ranking-toggle">
               <input type="checkbox" id="exclude-nyc" />
               Exclude New York City (its counts are much larger than other regions and may compress the chart scale)
@@ -486,19 +488,9 @@ if ($pdo) {
     });
     let trendBandState = { regionName: 'Selected region', latestGap: 0 };
 
-    const rankingChart = new Chart(document.getElementById('ranking-chart').getContext('2d'), {
-      type: 'bar',
-      data: { labels: [], datasets: [] },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        indexAxis: 'y',
-        plugins: { legend: { display: false } },
-        scales: {
-          x: { beginAtZero: true }
-        }
-      }
-    });
+    // Ranking chart — destroyed and recreated on each load so explicit pixel
+    // dimensions can be set, bypassing any CSS height overrides.
+    let rankingChart = null;
 
     function numberOrDash(value) {
       return (value === null || value === undefined || Number.isNaN(value)) ? '—' : value;
@@ -704,12 +696,30 @@ if ($pdo) {
       const selected = data.homelessness.selected_coc_number;
       const bgColors = labels.map(coc => coc === selected ? COLORS[3] : COLORS[0] + '99');
 
-      rankingChart.data.labels = labels;
-      rankingChart.data.datasets = [{
-        data: values,
-        backgroundColor: bgColors
-      }];
-      rankingChart.update();
+      const rowHeight = window.innerWidth <= 600 ? 28 : 32;
+      const computedHeight = Math.max(labels.length * rowHeight, 400);
+
+      if (rankingChart) rankingChart.destroy();
+
+      const canvas = document.getElementById('ranking-chart');
+      const sizer = document.getElementById('d2-ranking-sizer');
+      const containerWidth = sizer.offsetWidth || 600;
+      canvas.width  = containerWidth;
+      canvas.height = computedHeight;
+      sizer.style.height = computedHeight + 'px';
+
+      rankingChart = new Chart(canvas.getContext('2d'), {
+        type: 'bar',
+        data: { labels, datasets: [{ data: values, backgroundColor: bgColors }] },
+        options: {
+          responsive: false,
+          maintainAspectRatio: false,
+          indexAxis: 'y',
+          animation: { duration: 400 },
+          plugins: { legend: { display: false } },
+          scales: { x: { beginAtZero: true } }
+        }
+      });
     }
 
     function fetchDashboard() {

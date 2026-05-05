@@ -65,12 +65,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
     <link rel="icon" type="image/png" href="assets/favicon.png" />
     <link rel="apple-touch-icon" href="assets/favicon.png" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=1" />
   </head>
   <body>
     <?php require 'includes/header.php'; ?>
 
-    <main>
+    <main class="auth-layout">
       <section class="auth-section">
         <div class="container">
           <div class="card">

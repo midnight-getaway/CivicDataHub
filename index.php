@@ -8,7 +8,7 @@
  * Authors: Owen Sim, Kylie Mugrace, Keady Van Zandt
  */
 
-// Start session so header auth state can render correctly.
+// Start session
 session_start();
 ?>
 <!doctype html>
@@ -22,7 +22,7 @@ session_start();
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
   <link rel="icon" type="image/png" href="assets/favicon.png" />
   <link rel="apple-touch-icon" href="assets/favicon.png" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=1" />
 </head>
 
 <body>

@@ -8,9 +8,9 @@
  * Authors: Owen Sim, Kylie Mugrace, Keady Van Zandt
  */
 
-// Start session so auth-aware actions (save view) can be gated correctly.
+// Start session, release session lock
 session_start();
-session_write_close(); // Release the session lock immediately
+session_write_close();
 // Load shared DB connection for county filter bootstrapping.
 require_once 'db_connect.php';
 $is_embed = (isset($_GET['embed']) && $_GET['embed'] === '1');
@@ -32,7 +32,7 @@ if ($pdo) {
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
   <link rel="icon" type="image/png" href="assets/favicon.png" />
   <link rel="apple-touch-icon" href="assets/favicon.png" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=1" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 </head>
 
@@ -94,9 +94,9 @@ if ($pdo) {
           </select>
         </div>
 
-        <div class="filter-group view-actions dashboard1-view-actions">
-          <button id="save-view-btn" class="btn dashboard1-save-btn">Save View</button>
-          <button id="share-view-btn" class="btn dashboard1-share-btn">Share this View</button>
+        <div class="filter-group view-actions" style="margin-left:auto;">
+          <button id="save-view-btn" class="btn">Save View</button>
+          <button id="share-view-btn" class="btn">Share this View</button>
         </div>
       </div>
 

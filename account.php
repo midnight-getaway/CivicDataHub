@@ -65,7 +65,7 @@ if ($name_source !== '' && strpos($name_source, '@') === false) {
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
     <link rel="icon" type="image/png" href="assets/favicon.png" />
     <link rel="apple-touch-icon" href="assets/favicon.png" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=2" />
   </head>
   <body>
     <?php require 'includes/header.php'; ?>
@@ -121,20 +121,19 @@ if ($name_source !== '' && strpos($name_source, '@') === false) {
                 </div>
               </div>
             <?php else: ?>
-              <div class="views-grid" style="display: grid; gap: 1rem;">
-                <?php foreach ($saved_views as $view): 
-                  // Convert JSON filters to URL query string
+              <div class="views-grid">
+                <?php foreach ($saved_views as $view):
                   $filters = json_decode($view['filters'], true);
                   $query_str = http_build_query($filters);
                   $view_link = $view['dashboard_url'] . '?' . $query_str;
                 ?>
-                  <div class="view-tile card" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem;">
-                    <div>
-                      <h3 style="margin: 0 0 0.25rem;"><a href="<?php echo htmlspecialchars($view_link); ?>" style="text-decoration: none; color: var(--primary-dark);"><?php echo htmlspecialchars($view['view_name']); ?></a></h3>
-                      <p style="margin: 0; font-size: 0.9rem; color: var(--muted);"><?php echo htmlspecialchars($view['dashboard_name']); ?></p>
-                      <p style="margin: 0; font-size: 0.8rem; color: var(--muted);">Saved <?php echo date('M j, Y', strtotime($view['created_at'])); ?></p>
+                  <div class="view-tile">
+                    <div class="view-tile-info">
+                      <h3 class="view-tile-name"><a href="<?php echo htmlspecialchars($view_link); ?>"><?php echo htmlspecialchars($view['view_name']); ?></a></h3>
+                      <p class="view-tile-dash"><?php echo htmlspecialchars($view['dashboard_name']); ?></p>
+                      <p class="view-tile-date">Saved <?php echo date('M j, Y', strtotime($view['created_at'])); ?></p>
                     </div>
-                    <button class="btn btn-danger delete-view-btn" data-id="<?php echo $view['id']; ?>" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Delete</button>
+                    <button class="btn btn-danger delete-view-btn" data-id="<?php echo $view['id']; ?>">Delete</button>
                   </div>
                 <?php endforeach; ?>
               </div>

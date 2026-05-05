@@ -52,20 +52,13 @@
 /* ================= VARIABLES ====================== */
 
 :root {
-  --color-bg: #f4f6fc;
-  /* page background */
-  --color-navy: #050a30;
-  /* nav background, dark headings */
-  --color-blue-dark: #12229d;
-  /* primary buttons, active accents */
-  --color-blue-mid: #233dff;
-  /* hover accents and highlights */
-  --color-blue-light: #5cb6f9;
-  /* secondary accents */
-  --color-blue-pale: #cae8ff;
-  /* subtle borders and panel fills */
-  --color-white: #ffffff;
-  /* card surfaces and inverse text */
+  --color-bg: #f4f6fc;        /* page background */
+  --color-navy: #050a30;      /* nav background, dark headings */
+  --color-blue-dark: #12229d; /* primary buttons, active accents */
+  --color-blue-mid: #233dff;  /* hover accents and highlights */
+  --color-blue-light: #5cb6f9;/* secondary accents */
+  --color-blue-pale: #cae8ff; /* subtle borders and panel fills */
+  --color-white: #ffffff;     /* card surfaces and inverse text */
 
   --bg: var(--color-bg);
   --header-bar: var(--color-navy);
@@ -251,19 +244,6 @@ nav a[aria-current="page"] {
   padding-right: 32px;
 }
 
-.search-placeholder {
-  width: min(540px, 90%);
-  margin: 0 auto 1.5rem;
-  height: 46px;
-  border: 1px solid #c8cedd;
-  background: var(--field-bg);
-  color: var(--text);
-  display: grid;
-  place-items: center;
-  border-radius: 2px;
-  font-size: 1.1rem;
-  font-weight: 500;
-}
 
 .dashboard-grid {
   display: grid;
@@ -914,26 +894,67 @@ img[src*="Portrait-KV"] {
 /* Saved views grid */
 .views-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1rem;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
 }
 
 .view-tile {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.25rem;
   padding: 1rem;
   border: 1px solid var(--border);
-  border-radius: 4px;
-  background: var(--bg);
+  border-radius: 6px;
+  background: var(--color-white);
+  box-shadow: 0 2px 8px rgba(5, 10, 48, 0.06);
 }
 
-.view-tile h3 {
-  margin: 0 0 0.3rem;
+.view-tile-info {
+  min-width: 0;
+}
+
+.view-tile-name {
+  margin: 0 0 0.25rem;
   font-size: 0.95rem;
 }
 
-.view-tile p {
-  margin: 0.25rem 0 0;
+.view-tile-name a {
+  text-decoration: none;
+  color: var(--primary-dark);
+  font-weight: 600;
+}
+
+.view-tile-name a:hover {
+  color: var(--accent);
+}
+
+.view-tile-dash {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.view-tile-date {
+  margin: 0;
   font-size: 0.8rem;
   color: var(--muted);
+}
+
+.view-tile .delete-view-btn {
+  flex-shrink: 0;
+  align-self: flex-start;
+  width: auto;
+  white-space: nowrap;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+  margin-top: 0;
+  min-height: unset;
+}
+
+/* Auth pages wrapper — adds horizontal padding on narrow viewports */
+.auth-layout {
+  padding: 0 1rem;
 }
 
 /* Empty state */
@@ -1175,86 +1196,6 @@ img[src*="Portrait-KV"] {
   color: #ffffff;
 }
 
-/* Use flex layout for dashboard1 filters so controls and actions align naturally in one wrapping row. */
-.dashboard1-filter-bar {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-  padding: 16px 20px;
-}
-
-/* Keep each dashboard1 filter control as a compact label/select vertical pair. */
-.dashboard1-filter-bar .filter-group {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-/* Push dashboard1 action buttons to the end of the filter row on desktop. */
-.dashboard1-view-actions {
-  margin-left: auto;
-  flex-direction: row;
-  align-items: center;
-}
-
-/* Style dashboard1 Save View as the primary filled action button. */
-.dashboard1-save-btn {
-  background: #12229d;
-  color: #ffffff;
-  font-weight: 600;
-  font-size: 0.875rem;
-  border: none;
-  border-radius: 6px;
-  padding: 10px 20px;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background 0.2s ease;
-  min-height: 44px;
-}
-
-/* Darken dashboard1 Save View on hover to reinforce click affordance. */
-.dashboard1-save-btn:hover {
-  background: #050a30;
-}
-
-/* Style dashboard1 Share this View as the secondary outlined action button. */
-.dashboard1-share-btn {
-  background: transparent;
-  color: #12229d;
-  font-weight: 600;
-  font-size: 0.875rem;
-  border: 2px solid #12229d;
-  border-radius: 6px;
-  padding: 10px 20px;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.2s ease;
-  min-height: 44px;
-}
-
-/* Force dashboard1 Save/Share buttons to identical dimensions for perfectly matched sizing. */
-.dashboard1-save-btn,
-.dashboard1-share-btn {
-  width: 160px;
-  height: 44px;
-  padding: 0;
-  font-size: 0.875rem;
-  font-weight: 600;
-  border-radius: 6px;
-  box-sizing: border-box;
-  text-align: center;
-  white-space: nowrap;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Fill dashboard1 Share button on hover to match the system interaction pattern. */
-.dashboard1-share-btn:hover {
-  background: #12229d;
-  color: #ffffff;
-}
 
 /* Stat cards */
 .stat-cards {
@@ -1438,556 +1379,138 @@ img[src*="Portrait-KV"] {
   line-height: 1.3;
 }
 
-.chart-card canvas {
-  width: 100% !important;
-  max-width: 100%;
-}
-
-/* ================= MEDIA QUERIES ====================== */
-/* --- Tablet --- */
-@media (max-width: 920px) {
+/* == RESPONSIVE: TABLET (max-width: 1024px) == */
+@media (max-width: 1024px) {
   .nav {
     flex-wrap: wrap;
     gap: 0.75rem;
     padding: 0.75rem 0;
   }
 
-  .brand-logo {
-    height: 54px;
-  }
+  .brand-logo { height: 50px; }
 
-  .dashboard-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
+  /* Home layout */
+  .home-layout .content-grid { grid-template-columns: 1.15fr 0.85fr; }
+  .home-layout .insight-text { font-size: 1.6rem; }
+  .home-layout .insight-subtext { font-size: 0.9rem; max-width: 100%; }
+  .home-layout .datapoint-label { font-size: 0.78rem; }
+  .home-layout .datapoint-value { font-size: 1.8rem; }
 
-  .content-grid,
-  .account-section .container {
-    grid-template-columns: 1fr;
-  }
+  /* Layout */
+  .content-grid { grid-template-columns: 1fr; }
+  .account-section .container { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+  .account-section .card { padding: 1.25rem; }
+  .insight-column { align-items: flex-start; gap: 1rem; }
 
-  .graphic-placeholder {
-    min-height: 300px;
-    font-size: 1.5rem;
-  }
+  /* Carousel */
+  .graphic-placeholder { min-height: 300px; }
+  .dashboard-carousel, .carousel-link, #carousel-frame { min-height: 300px; height: 300px; }
 
-  .dashboard-carousel,
-  .carousel-link,
-  #carousel-frame {
-    min-height: 300px;
-    height: 300px;
-  }
+  /* Charts */
+  .chart-grid { grid-template-columns: 1fr; }
+  .chart-card canvas:not(#ranking-chart) { height: 300px !important; }
 
-  .insight-column {
-    align-items: flex-start;
-    gap: 1rem;
-  }
+  /* Stat cards & dashboard sections */
+  .stat-cards { grid-template-columns: repeat(3, 1fr); }
+  .dashboard-section { padding: 0.9rem 0.85rem 1rem; }
+  .section-title { font-size: 1.2rem; }
+  .dashboard-section .filter-bar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .mini-stat-grid, .subpop-grid { grid-template-columns: 1fr; }
 
-  .about-column {
-    flex: 1 1 100%;
-  }
+  /* Filter action buttons */
+  .filter-group.view-actions .btn { width: 140px; height: 44px; }
 
-  .auth-section .card {
-    padding: 1.75rem 1.25rem;
-  }
+  /* Auth */
+  .auth-section .card { padding: 1.75rem 1.25rem; }
 
-  .chart-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .stat-cards {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  .dashboard-section {
-    padding: 0.9rem 0.85rem 1rem;
-  }
-
-  .section-title {
-    font-size: 1.2rem;
-  }
-
-  .dashboard-section .filter-bar {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .mini-stat-grid,
-  .subpop-grid {
-    grid-template-columns: 1fr;
-  }
+  /* About */
+  .about-column { flex: 1 1 100%; }
+  .about-layout { padding: 32px 24px; }
+  .about-intro h1 { font-size: 1.6rem; }
+  .about-copy { max-width: 100%; }
+  .about-card { padding: 16px; }
+  .team-card { padding: 0; }
+  .team-card-content { padding: 16px; }
+  .portrait { height: 220px; }
 }
 
-/* --- Mobile --- */
-@media (max-width: 480px) {
-  nav ul {
-    gap: 0.5rem;
-  }
-
-  nav a {
-    font-size: 0.85rem;
-  }
-
-  .dashboards-dropdown {
-    right: auto;
-    left: 0;
-    min-width: 190px;
-  }
-
-  .dashboard-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .auth-section .card {
-    padding: 1.25rem 1rem;
-  }
-
-  .stat-cards {
-    grid-template-columns: 1fr;
-  }
-
-  .filter-bar {
-    flex-direction: column;
-  }
-
-  .dashboard-section {
-    padding: 0.8rem 0.7rem 0.9rem;
-  }
-
-  .section-title {
-    font-size: 1.08rem;
-  }
-
-  .dashboard-section .filter-bar {
-    grid-template-columns: 1fr;
-    padding: 0.7rem 0.75rem;
-    gap: 0.7rem;
-  }
-
-  .section-stat-cards-two {
-    grid-template-columns: 1fr;
-  }
-
-  .compare-rank {
-    font-size: 1.08rem;
-  }
-
-  .stat-card {
-    padding: 1rem;
-  }
-
-  .chart-card {
-    padding: 0.9rem;
-  }
-
-  .floating-tooltip {
-    max-width: 85vw;
-  }
-
-  .dashboard-carousel,
-  .carousel-link,
-  #carousel-frame {
-    min-height: 240px;
-    height: 240px;
-  }
-}
-
-/* === NAVIGATION: MOBILE TOGGLE === */
-.nav-toggle {
-  display: none;
-  width: 44px;
-  height: 44px;
-  min-width: 44px;
-  min-height: 44px;
-  border: 1px solid rgba(202, 232, 255, 0.5);
-  background: transparent;
-  border-radius: 6px;
-  padding: 9px 8px;
-  cursor: pointer;
-}
-
-.nav-toggle span {
-  display: block;
-  height: 2px;
-  margin: 5px 0;
-  background: var(--color-white);
-  border-radius: 999px;
-}
-
-/* === CHART CONTAINERS === */
-.chart-card canvas:not(#ranking-chart) {
-  width: 100% !important;
-  height: 340px !important;
-}
-
-.chart-canvas-wrap {
-  width: 100%;
-  height: 100%;
-}
-
-/* === RESPONSIVE - DESKTOP (1025px+) === */
-@media (min-width: 1025px) {
-  .dashboard-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-/* === RESPONSIVE - TABLET (601px-1024px) === */
-@media (min-width: 601px) and (max-width: 1024px) {
-  .brand-logo {
-    height: 50px;
-  }
-
-  .home-layout .content-grid {
-    grid-template-columns: 1.15fr 0.85fr;
-  }
-
-  .home-layout .insight-text {
-    font-size: 1.6rem;
-  }
-
-  .home-layout .insight-subtext {
-    font-size: 0.9rem;
-    max-width: 100%;
-  }
-
-  .home-layout .datapoint-label {
-    font-size: 0.78rem;
-  }
-
-  .home-layout .datapoint-value {
-    font-size: 1.8rem;
-  }
-
-  .dashboard-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .account-section .container {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
-  }
-
-  .account-section .card {
-    padding: 1.25rem;
-  }
-
-  .chart-grid {
-    grid-template-columns: 1fr !important;
-  }
-
-  .chart-card canvas:not(#ranking-chart) {
-    height: 300px !important;
-  }
-
-  /* Move dashboard1 actions below filters on tablet while preserving readable spacing. */
-  .dashboard1-view-actions {
-    margin-left: 0;
-    width: 100%;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
-  }
-
-  /* Keep dashboard1 action buttons at fixed tablet width to match other dashboards. */
-  .dashboard1-view-actions .btn {
-    width: 140px;
-  }
-
-  /* Keep dashboard1 button dimensions aligned with global tablet sizing. */
-  .dashboard1-save-btn,
-  .dashboard1-share-btn {
-    width: 140px;
-    height: 44px;
-  }
-
-  /* Apply identical tablet button dimensions for Save/Share controls on all dashboards. */
-  .filter-group.view-actions .btn {
-    width: 140px;
-    height: 44px;
-  }
-
-  /* Scale About page outer padding for tablet screens to preserve readable density. */
-  .about-layout {
-    padding: 32px 24px;
-  }
-
-  /* Reduce About page title size for tablet while keeping strong hierarchy. */
-  .about-intro h1 {
-    font-size: 1.6rem;
-  }
-
-  /* Keep About narrative paragraphs within full tablet width where needed. */
-  .about-copy {
-    max-width: 100%;
-  }
-
-  /* Reduce card padding on tablet while preserving three-card row layout. */
-  .about-card {
-    padding: 16px;
-  }
-
-  /* Keep team card photo flush on tablet after global card padding reduction. */
-  .team-card {
-    padding: 0;
-  }
-
-  /* Keep text-area padding compact on tablet while preserving readability. */
-  .team-card-content {
-    padding: 16px;
-  }
-
-  /* Reduce rectangular team photo height on tablet for balanced card proportions. */
-  .portrait {
-    height: 220px;
-  }
-}
-
-/* === RESPONSIVE - MOBILE (<=600px) === */
+/* == RESPONSIVE: MOBILE (max-width: 600px) == */
 @media (max-width: 600px) {
-  h1 {
-    font-size: max(1.6rem, 80%);
-  }
+  h1 { font-size: max(1.6rem, 80%); }
+  h2 { font-size: max(1.1rem, 85%); }
+  body { font-size: max(0.9rem, 14px); }
 
-  h2 {
-    font-size: max(1.1rem, 85%);
-  }
-
-  body {
-    font-size: max(0.9rem, 14px);
-  }
-
-  .brand-logo {
-    height: 44px;
-  }
-
-  .nav {
-    flex-wrap: wrap;
-    gap: 0.55rem;
-    min-height: auto;
-    padding: 0.45rem 0;
-  }
-
-  .nav-toggle {
-    display: inline-block;
-  }
-
-  nav {
-    width: 100%;
-  }
-
-  nav ul {
-    display: none;
-    width: 100%;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.4rem;
-  }
-
-  nav ul.open {
-    display: flex;
-  }
-
+  /* Navigation */
+  .brand-logo { height: 44px; }
+  .nav { flex-wrap: wrap; gap: 0.55rem; min-height: auto; padding: 0.45rem 0; }
+  .nav-toggle { display: inline-block; }
+  nav { width: 100%; }
+  nav ul { display: none; width: 100%; flex-direction: column; align-items: stretch; gap: 0.4rem; }
+  nav ul.open { display: flex; }
   nav a,
   .dashboards-label,
   .dashboards-dropdown a,
   button,
   select,
-  input[type="checkbox"] {
-    min-height: 44px;
-  }
+  input[type="checkbox"] { min-height: 44px; }
+  nav a { display: flex; align-items: center; padding: 0 0.65rem; }
+  .dashboards-menu { padding-bottom: 0; }
+  .dashboards-dropdown { position: static; display: flex; flex-direction: column; box-shadow: none; margin-top: 0.2rem; }
 
-  nav a {
-    display: flex;
-    align-items: center;
-    padding: 0 0.65rem;
-  }
+  /* Layout */
+  .dashboard-grid { grid-template-columns: 1fr; gap: 8px; }
+  .content-grid { grid-template-columns: 1fr; }
+  .account-section .container { grid-template-columns: 1fr; }
 
-  .dashboards-menu {
-    padding-bottom: 0;
-  }
+  /* Carousel */
+  .graphic-placeholder { min-height: 340px; }
+  .dashboard-carousel, .carousel-link { min-height: 340px; height: 340px; }
+  #carousel-frame { height: calc(340px - 80px); min-height: calc(340px - 80px); }
 
-  .dashboards-dropdown {
-    position: static;
-    display: flex;
-    flex-direction: column;
-    box-shadow: none;
-    margin-top: 0.2rem;
-  }
-
-  .dashboard-grid {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-
-  .content-grid {
-    grid-template-columns: 1fr;
-  }
-
-  /* Give the carousel a taller, more prominent height on mobile. */
-  .graphic-placeholder {
-    min-height: 340px;
-  }
-
-  .dashboard-carousel,
-  .carousel-link {
-    min-height: 340px;
-    height: 340px;
-  }
-
-  #carousel-frame {
-    height: calc(340px - 80px);
-    min-height: calc(340px - 80px);
-  }
-
-  .insight-column {
-    width: 100%;
-  }
-
-  .home-layout .insight-text {
-    font-size: 1.35rem;
-    letter-spacing: -0.01em;
-    margin-bottom: 8px;
-    max-width: 100%;
-  }
-
-  .home-layout .insight-subtext {
-    font-size: 0.85rem;
-    margin: 0 0 20px;
-    max-width: 100%;
-  }
-
-  .home-layout .insight-column {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 8px;
-  }
-
+  /* Insight column */
+  .insight-column { width: 100%; }
+  .home-layout .insight-text { font-size: 1.35rem; letter-spacing: -0.01em; margin-bottom: 8px; max-width: 100%; }
+  .home-layout .insight-subtext { font-size: 0.85rem; margin: 0 0 20px; max-width: 100%; }
+  .home-layout .insight-column { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
   .home-layout .insight-text,
-  .home-layout .insight-subtext {
-    grid-column: 1 / -1;
-  }
+  .home-layout .insight-subtext { grid-column: 1 / -1; }
+  .home-layout .insight-column .datapoint-box { min-height: 90px; padding: 10px 8px; }
+  .home-layout .datapoint-label { font-size: 0.6rem; }
+  .home-layout .datapoint-value { font-size: 1.4rem; }
 
-  .home-layout .insight-column .datapoint-box {
-    min-height: 90px;
-    padding: 10px 8px;
-  }
-
-  .home-layout .datapoint-label {
-    font-size: 0.6rem;
-  }
-
-  .home-layout .datapoint-value {
-    font-size: 1.4rem;
-  }
-
+  /* Filters */
   .filter-bar,
-  .dashboard-section .filter-bar {
-    grid-template-columns: 1fr !important;
-    gap: 8px !important;
-  }
+  .dashboard-section .filter-bar { grid-template-columns: 1fr !important; gap: 8px !important; }
+  .filter-group { width: 100%; }
+  .filter-group.view-actions { flex-direction: column; align-items: stretch; gap: 8px; }
+  .filter-group.view-actions .btn { width: 100%; height: 44px; }
 
-  .filter-group {
-    width: 100%;
-  }
+  /* Stat cards & charts */
+  .stat-cards { grid-template-columns: 1fr; }
+  .stat-value { font-size: max(1.6rem, 0.75rem); }
+  .stat-card { padding: 1rem; }
+  .chart-card { padding: 0.9rem; }
+  .chart-card canvas:not(#ranking-chart) { height: 220px !important; }
+  .section-stat-cards-two { grid-template-columns: 1fr; }
+  .section-title { font-size: 1.08rem; }
+  .dashboard-section { padding: 0.8rem 0.7rem 0.9rem; }
+  .dashboard-section .filter-bar { padding: 0.7rem 0.75rem; gap: 0.7rem; }
+  .compare-rank { font-size: 1.08rem; }
+  .floating-tooltip { max-width: 85vw; }
 
-  /* Stack Save/Share buttons on mobile so they remain balanced and easy to tap. */
-  .filter-group.view-actions {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
-  }
+  /* Auth */
+  .auth-section .card { width: 90%; margin: 0 auto; padding: 1rem; }
+  .auth-form input, .auth-form select, .auth-form button { width: 100%; }
 
-  /* Let each action button fill the mobile row with fixed tap height on all dashboards. */
-  .filter-group.view-actions .btn {
-    width: 100%;
-    height: 44px;
-  }
+  /* Tables */
+  table, .table-wrap { display: block; overflow-x: auto; width: 100%; }
 
-  /* Keep dashboard1 action group below dropdowns on mobile with full-width stacked buttons. */
-  .dashboard1-view-actions {
-    margin-left: 0;
-    width: 100%;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
-  }
-
-  /* Expand dashboard1 action buttons to full width on mobile while keeping fixed tap height. */
-  .dashboard1-save-btn,
-  .dashboard1-share-btn {
-    width: 100%;
-    height: 44px;
-  }
-
-  .stat-cards {
-    grid-template-columns: 1fr;
-  }
-
-  .stat-value {
-    font-size: max(1.6rem, 0.75rem);
-  }
-
-  .account-section .container {
-    grid-template-columns: 1fr;
-  }
-
-  .auth-section .card {
-    width: 90%;
-    margin: 0 auto;
-    padding: 1rem;
-  }
-
-  .auth-form input,
-  .auth-form select,
-  .auth-form button {
-    width: 100%;
-  }
-
-  .chart-card canvas:not(#ranking-chart) {
-    height: 220px !important;
-  }
-
-  table,
-  .table-wrap {
-    display: block;
-    overflow-x: auto;
-    width: 100%;
-  }
-
-  /* Reduce About page padding on mobile and prevent horizontal scrolling. */
-  .about-layout {
-    padding: 24px 16px;
-    overflow-x: hidden;
-  }
-
-  /* Scale About page title and subline for smaller screens. */
-  .about-intro h1 {
-    font-size: 1.35rem;
-  }
-
-  .about-subline {
-    font-size: 0.85rem;
-  }
-
-  /* Apply requested mobile paragraph sizing and side padding for readability. */
-  .about-copy {
-    font-size: 0.9rem;
-    max-width: 100%;
-    padding: 0 16px;
-  }
-
-  /* Stack team cards vertically on mobile with requested spacing. */
-  .about-row {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  /* Reduce rectangular team photo height on mobile to fit smaller viewports. */
-  .portrait {
-    height: 200px;
-  }
-
-  /* Keep mobile text-area padding comfortable and consistent with card spacing. */
-  .team-card-content {
-    padding: 16px;
-  }
+  /* About */
+  .about-layout { padding: 24px 16px; overflow-x: hidden; }
+  .about-intro h1 { font-size: clamp(1.1rem, 5vw, 1.35rem); }
+  .about-subline { font-size: 0.85rem; }
+  .about-copy { font-size: 0.9rem; max-width: 100%; padding: 0 16px; }
+  .about-row { grid-template-columns: 1fr; gap: 16px; }
+  .portrait { height: 200px; }
+  .team-card-content { padding: 16px; }
 }
