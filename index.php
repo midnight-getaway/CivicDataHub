@@ -10,6 +10,7 @@
 
 // Start session
 session_start();
+session_write_close();
 ?>
 <!doctype html>
 <html lang="en">

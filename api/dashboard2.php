@@ -68,7 +68,13 @@ function fetchJsonWithCache($url, $cache_ttl_seconds = 43200) {
         }
     }
 
-    $resp = @file_get_contents($url);
+    // Add a strict timeout so a slow Census API doesn't exhaust PHP-FPM workers
+    $ctx = stream_context_create([
+        'http' => ['timeout' => 3.0],
+        'https' => ['timeout' => 3.0]
+    ]);
+    
+    $resp = @file_get_contents($url, false, $ctx);
     if ($resp === false) {
         return null;
     }
