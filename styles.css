@@ -1404,17 +1404,54 @@ img[src*="Portrait-KV"] {
   font-size: 1.3rem;
 }
 
-/* Dashboard2: make filter controls flow responsively */
+/* Dashboard2: align section filter bars with the same flex-wrap pattern used on other dashboards. */
 .dashboard-section .filter-bar {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   align-items: end;
   gap: 0.85rem 1rem;
   padding: 0.85rem 1rem;
 }
 
+/* Dashboard2: give each filter control a flexible width so rows wrap naturally on smaller screens. */
+.dashboard-section .filter-group {
+  flex: 1 1 180px;
+  min-width: 180px;
+}
+
+/* Dashboard2: keep Save/Share actions right-aligned on larger screens like dashboards 1 and 3. */
+.dashboard-section .filter-group.view-actions {
+  flex: 0 0 auto;
+  min-width: auto;
+  margin-left: auto;
+  align-items: center;
+  flex-direction: row;
+}
+
 .dashboard-section .filter-group label {
   line-height: 1.25;
+}
+
+.dashboard2-page {
+  /* Prevent dashboard-level horizontal scrolling on narrow devices. */
+  overflow-x: hidden;
+}
+
+.dashboard2-page .dashboard-layout,
+.dashboard2-page .dashboard-layout .container,
+.dashboard2-page .dashboard-section,
+.dashboard2-page .chart-grid,
+.dashboard2-page .chart-card,
+.dashboard2-page .chart-canvas-wrap,
+.dashboard2-page #d2-ranking-container,
+.dashboard2-page #d2-ranking-sizer {
+  /* Keep every major dashboard2 wrapper constrained to viewport width. */
+  max-width: 100%;
+}
+
+.dashboard2-page .chart-card {
+  /* Allow grid children to shrink instead of forcing horizontal overflow. */
+  min-width: 0;
 }
 
 .ranking-toggle {
@@ -1457,7 +1494,11 @@ img[src*="Portrait-KV"] {
   .stat-cards { grid-template-columns: repeat(3, 1fr); }
   .dashboard-section { padding: 0.9rem 0.85rem 1rem; }
   .section-title { font-size: 1.2rem; }
-  .dashboard-section .filter-bar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* Dashboard2: switch filter controls to a two-up wrap layout on tablet widths. */
+  .dashboard-section .filter-group { flex: 1 1 calc(50% - 0.5rem); min-width: 0; }
+  /* Dashboard2: move Save/Share actions below filters and stack them on tablet. */
+  .dashboard-section .filter-group.view-actions { flex: 1 1 100%; margin-left: 0; align-items: stretch; flex-direction: column; }
+  .dashboard2-page #d2-ranking-container { max-height: 500px; }
   .mini-stat-grid, .subpop-grid { grid-template-columns: 1fr; }
 
   /* Filter action buttons */
@@ -1523,7 +1564,12 @@ img[src*="Portrait-KV"] {
 
   /* Filters */
   .filter-bar,
-  .dashboard-section .filter-bar { grid-template-columns: 1fr !important; gap: 8px !important; }
+  .dashboard-section .filter-bar { gap: 8px !important; }
+  /* Dashboard2: stack every filter group to full width on mobile for consistent control spacing. */
+  .dashboard-section .filter-group { flex: 1 1 100%; min-width: 0; }
+  /* Dashboard2: keep actions full-width and stacked on mobile like dashboards 1 and 3. */
+  .dashboard-section .filter-group.view-actions { margin-left: 0; align-items: stretch; flex-direction: column; }
+  .dashboard2-page #d2-ranking-container { max-height: 400px; }
   .filter-group { width: 100%; }
   .filter-group.view-actions { flex-direction: column; align-items: stretch; gap: 8px; }
   .filter-group.view-actions .btn { width: 100%; height: 44px; }

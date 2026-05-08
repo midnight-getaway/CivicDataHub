@@ -35,7 +35,7 @@ if ($pdo) {
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 </head>
 
-<body class="<?= $is_embed ? 'embed-preview' : '' ?>">
+<body class="<?= $is_embed ? 'embed-preview dashboard2-page' : 'dashboard2-page' ?>">
   <?php if (!$is_embed) require 'includes/header.php'; ?>
 
   <main class="dashboard-layout">
@@ -703,7 +703,11 @@ if ($pdo) {
 
       const canvas = document.getElementById('ranking-chart');
       const sizer = document.getElementById('d2-ranking-sizer');
-      const containerWidth = sizer.offsetWidth || 600;
+      const container = document.getElementById('d2-ranking-container');
+      // Use measured parent widths (not a large fixed fallback) to prevent iPhone horizontal overflow.
+      const containerWidth = sizer.offsetWidth || container.clientWidth || canvas.parentNode.clientWidth || 320;
+      // Keep CSS width fluid while setting internal canvas pixels to the measured container width.
+      canvas.style.width = '100%';
       canvas.width  = containerWidth;
       canvas.height = computedHeight;
       sizer.style.height = computedHeight + 'px';
